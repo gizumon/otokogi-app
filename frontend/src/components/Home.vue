@@ -15,6 +15,8 @@
         <button class="btn">追加</button>
       </div>
     </div>
+  <div>{{ msg }}</div>
+  <input type='text' name='text' v-model='text'>
   <button @click='post'>click me</button>
   </div>
 </template>
@@ -34,20 +36,23 @@ import Methods from '@/api/methods';
 
 export default {
   name: 'Home',
+  data () {
+    return {
+      msg: 'Welcome to Your Vue.js App',
+      text: ''
+    };
+  },
   components: {
     SelectName,
     SelectCategory
   },
   methods: {
-    async post() {
-      let res = await Methods.testPosting();
-      console.log(response);
+    async post () {
+      let element = { text: this.text };
+      let response = await Methods.testPosting(element);
+      console.log(response.data.message);
     }
   }
-  // data () {
-  //   return {
-  //     title: "漢気旅行旅";
-  // }
 };
 
 </script>

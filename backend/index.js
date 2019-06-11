@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.get('/test', function (req, res) {
+app.post('/test', function (req, res) {
   res.send({
     message: req.body.text
   });
