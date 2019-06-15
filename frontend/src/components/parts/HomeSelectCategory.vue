@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'SelectCategory'
+  name: 'HomeSelectCategory'
 };
 
 </script>

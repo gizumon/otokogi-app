@@ -1,0 +1,14 @@
+// UserDBテストリクエスト
+
+###
+POST http://localhost:3000/api/v1/user
+content-type: application/json
+
+{
+    "name": "test2",
+    "winNum": 1,
+    "loseNum": 0
+}
+
+### user全件取得
+GET http://localhost:3000/api/v1/user

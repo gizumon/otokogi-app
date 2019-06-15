@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: 'HeaderItem'
+  name: 'BaseHeader'
 };
 
 </script>

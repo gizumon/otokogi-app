@@ -5,9 +5,18 @@ import Home from '@/components/Home';
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import BaseModal from './parts/BaseModal';
 
 Vue.use(Router);
 Vue.use(BootstrapVue);
+
+Vue.component('base-modal', {
+  props: {
+    // いるかわからないけど、一応。モーダルのコンテンツを定義したいだけ。
+    content: String
+  },
+  template: BaseModal
+});
 
 export default new Router({
   routes: [

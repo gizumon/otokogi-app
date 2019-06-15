@@ -18,40 +18,37 @@
   <div>{{ msg }}</div>
   <input type='text' name='text' v-model='text'>
   <button @click='post'>click me</button>
+  <button @click="openModal">開く</button>
   </div>
 </template>
 
 <script>
-import SelectName from './parts/SelectName';
-import SelectCategory from './parts/SelectCategory';
+import HomeSelectName from './parts/HomeSelectName';
+import HomeSelectCategory from './parts/HomeSelectCategory';
 import Methods from '@/api/methods';
-
-// tmp
-// let event = {
-//   'id': '1',
-//   'title': 'sample'
-// }
-// let id = '1'
-// let title = '漢気旅行旅';
 
 export default {
   name: 'Home',
-  data () {
+  data: function () {
     return {
       msg: 'Welcome to Your Vue.js App',
       text: ''
     };
   },
   components: {
-    SelectName,
-    SelectCategory
+    'home-select-name': HomeSelectName,
+    'home-select-category': HomeSelectCategory,
+    'base-modal': BaseModal
   },
   methods: {
-    async post () {
-      let element = { text: this.text };
-      let response = await Methods.testPosting(element);
-      console.log(response.data.message);
+    openModal: function () {
+      this.modal = true;
+    },
+    closeModal: function () {
+      this.modal = false;
     }
+    // DB参照 選択されたイベントの漢気ポイント一覧を表示
+    // async get ()
   }
 };
 

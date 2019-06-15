@@ -6,12 +6,12 @@
 </template>
 
 <script>
-import HeaderItem from './components/parts/HeaderItem';
+import BaseHeader from './components/parts/BaseHeader';
 
 export default {
   name: 'App',
   components: {
-    HeaderItem
+    BaseHeader
   }
 };
 
