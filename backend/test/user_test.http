@@ -1,14 +1,43 @@
 // UserDBテストリクエスト
 
-###
+### ユーザー登録
 POST http://localhost:3000/api/v1/user
 content-type: application/json
 
 {
-    "name": "test2",
+    "name": "Yamaken",
     "winNum": 1,
     "loseNum": 0
 }
 
-### user全件取得
+### ユーザー全件取得
 GET http://localhost:3000/api/v1/user
+
+### カテゴリ登録
+POST http://localhost:3000/api/v1/category
+content-type: application/json
+
+{
+    "name": "Other"
+}
+
+
+### カテゴリ全件取得
+GET http://localhost:3000/api/v1/category
+
+
+### カテゴリ登録
+POST http://localhost:3000/api/v1/event
+content-type: application/json
+
+{
+  "no": 2,
+  "name": "テスト2イベント",
+  "destination": ["東京"],
+  "dateFrom": "2019-07-13",
+  "dateTo": "2019-07-14"
+}
+
+
+### カテゴリ全件取得
+GET http://localhost:3000/api/v1/event

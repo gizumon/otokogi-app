@@ -15,7 +15,11 @@ let UserSchema = new Schema({
     type: Number,
     default: 0
   },
-  date: {
+  totalPoint: {
+    type: Number,
+    default: 0
+  },
+  createdAt: {
     type: Date,
     default: Date.now
   }
@@ -48,6 +52,16 @@ UserSchema.method({
   updateLoseNum: function (id) {
     const updateVal = this.findById(id).loseNum + 1;
     return this.findById(id).update({loseNum: updateVal});
+  },
+  deleteUserById: function (id) {
+    return this.findByIdAndRemove(id, function(err){
+      if(err) throw err;
+   });
+  },
+  deleteUserByName: function (name) {
+    return this.findOneAndRemove({ "name" : name }, function(err){
+      if(err) throw err;
+   });
   }
 });
 //

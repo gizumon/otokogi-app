@@ -37,5 +37,6 @@ export default {
 #nav {
   width: 100%;
   height: 10vh;
+  margin-bottom: 10px;
 }
 </style>

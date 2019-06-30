@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HeaderItem />
+    <base-header/>
     <router-view/>
   </div>
 </template>
@@ -11,7 +11,7 @@ import BaseHeader from './components/parts/BaseHeader';
 export default {
   name: 'App',
   components: {
-    BaseHeader
+    'base-header': BaseHeader
   }
 };
 

@@ -1,15 +1,27 @@
 <template>
-  <transition name="modal" appear>
-    <div class="modal modal-overlay" @click.self="$emit('close')">
-      <div class="modal-window">
-        <div class="modal-content">
-          <slot/>
+  <transition name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+
+          <div class="modal-header">
+            <slot name="header">
+              default header
+            </slot>
+          </div>
+
+          <div class="modal-body">
+            <slot name="body">
+              default body
+            </slot>
+          </div>
+
+          <div class="modal-footer">
+            <slot name="footer">
+              <button class="modal-default-button" @click="$emit('close')">Close</button>
+            </slot>
+          </div>
         </div>
-        <footer class="modal-footer">
-          <slot name="footer">
-            <button @click="$emit('close')">Close</button>
-          </slot>
-        </footer>
       </div>
     </div>
   </transition>
@@ -18,60 +30,77 @@
 <script>
 export default {
   name: 'BaseModal'
+  // data () {
+  //   return {
+  //     showModal: false
+  //   };
+  // }
 };
 
 </script>
 
-<style lang="stylus" scoped>
-.modal {
-  &.modal-overlay {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    z-index: 30;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-  }
-
-  &-window {
-    background: #fff;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  &-content {
-    padding: 10px 20px;
-  }
-
-  &-footer {
-    background: #ccc;
-    padding: 10px;
-    text-align: right;
-  }
+<style scoped>
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
 }
 
-.modal-enter-active, .modal-leave-active {
-  transition: opacity 0.4s;
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
 
-  .modal-window {
-    transition: opacity 0.4s, transform 0.4s;
-  }
+.modal-container {
+  width: 300px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+}
+
+.modal-body {
+  margin: 20px 0;
+}
+
+.modal-default-button {
+  float: right;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter {
+  opacity: 0;
 }
 
 .modal-leave-active {
-  transition: opacity 0.6s ease 0.4s;
+  opacity: 0;
 }
 
-.modal-enter, .modal-leave-to {
-  opacity: 0;
-
-  .modal-window {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
 }
 </style>

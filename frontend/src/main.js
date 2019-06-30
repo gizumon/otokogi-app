@@ -3,6 +3,11 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+// import BaseModal from './components/parts/BaseModal';
+
+// Vue.component('base-modal', {
+//   templdate: BaseModal
+// });
 
 Vue.config.productionTip = false;
 
