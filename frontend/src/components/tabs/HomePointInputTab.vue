@@ -1,34 +1,37 @@
 <template>
-  <div class="card m-3">
-    <div class="card-header">
-      <base-select-event />
+  <div id="home-point-input">
+    <div class="card m-3">
+      <div class="card-header">
+        <base-select-event />
+      </div>
+      <div class="card-body">
+      <form>
+          <div class="form-row align-items-center">
+          <div class="col-4 my-1">
+              <label class="sr-only" for="selectName">Winner</label>
+              <base-select-user />
+          </div>
+          <div class="col-4 my-1">
+              <label class="sr-only" for="selectCategory">Category</label>
+              <base-select-category />
+          </div>
+          <div class="col-2 my-1">
+              <label class="sr-only" for="otokogiPoint">Point</label>
+              <div class="input-group">
+              <div class="input-group-prepend">
+                  <div class="input-group-text">￥</div>
+              </div>
+              <input class="form-control" type="tel" name="point" placeholder="1000">
+              </div>
+          </div>
+          <div class="col-1 pull-right my-1">
+              <button type="submit" class="btn btn-primary">Add</button>
+          </div>
+          </div>
+      </form>
+      </div>
     </div>
-    <div class="card-body">
-    <form>
-        <div class="form-row align-items-center">
-        <div class="col-4 my-1">
-            <label class="sr-only" for="selectName">Winner</label>
-            <base-select-user />
-        </div>
-        <div class="col-4 my-1">
-            <label class="sr-only" for="selectCategory">Category</label>
-            <base-select-category />
-        </div>
-        <div class="col-2 my-1">
-            <label class="sr-only" for="otokogiPoint">Point</label>
-            <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text">￥</div>
-            </div>
-            <input class="form-control" type="tel" name="point" placeholder="1000">
-            </div>
-        </div>
-        <div class="col-1 pull-right my-1">
-            <button type="submit" class="btn btn-primary">Add</button>
-        </div>
-        </div>
-    </form>
-    </div>
+  <home-point-input-table />
   </div>
 </template>
 
@@ -36,6 +39,7 @@
 import BaseSelectUser from '../parts/BaseSelectUser';
 import BaseSelectCategory from '../parts/BaseSelectCategory';
 import BaseSelectEvent from '../parts/BaseSelectEvent';
+import HomePointInputTable from '../parts/HomePointInputTable';
 
 export default {
   name: 'PointInputTab',
@@ -49,7 +53,8 @@ export default {
   components: {
     'base-select-user': BaseSelectUser,
     'base-select-category': BaseSelectCategory,
-    'base-select-event': BaseSelectEvent
+    'base-select-event': BaseSelectEvent,
+    'home-point-input-table': HomePointInputTable
   }
   // },
   // methods: {

@@ -8,24 +8,20 @@
 </template>
 
 <script>
-import Axios from 'axios';
+import UserService from '../../services/UserService';
+
 export default {
   name: 'BaseSelectUser',
   data: function () {
     return {
       users: []};
   },
-  mounted () {
-    const self = this;
-    // CORS対応
-    Axios.get('http://localhost:3000/api/v1/user', {headers: {'Access-Control-Allow-Origin': '*'}})
-      .then(function (response) {
-        console.log(response);
-        self.users = response.data;
-      })
-      .catch(function (error) {
-        console.error('ERR: Failed to get users information : ' + error);
-      });
+  async mounted () {
+    // ユーザー取得
+    const userService = new UserService();
+    await userService.init();
+    this.users = userService.users;
+    console.log(this.users, '!!!!');
   }
 };
 

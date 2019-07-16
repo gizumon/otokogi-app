@@ -8,7 +8,8 @@
 </template>
 
 <script>
-import Axios from 'axios';
+import api from '../../api/index';
+
 export default {
   name: 'BaseSelectCategory',
   data: function () {
@@ -18,7 +19,7 @@ export default {
   mounted () {
     const self = this;
     // CORS対応
-    Axios.get('http://localhost:3000/api/v1/category', {headers: {'Access-Control-Allow-Origin': '*'}})
+    api.get('/category')
       .then(function (response) {
         console.log(response);
         self.categories = response.data;
