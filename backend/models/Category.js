@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 let CategorySchema = new Schema({
   name: {
     type: String,
+    unique: true,
     required: true
   },
   createdAt: {
@@ -16,12 +17,15 @@ let CategorySchema = new Schema({
 // User schena methods
 // INFO: インスタンスを生成せずに呼び出す可能性がある場合、Staticメソッドとしている。
 CategorySchema.static({
-  getAll: function () {
-    this.find().exec( (err, categories) => {
-      if (err) return handleError(err);
-      return this.result = categories;
+  getAll: function() {
+    return this.find().exec().then(results => {
+      return results;
     });
-    return this.result;
+  },
+  deleteById: function(id) {
+    return this.findByIdAndRemove(id, function(err){
+      if(err) throw err;
+    });
   }
 });
 
@@ -34,19 +38,19 @@ CategorySchema.method({
     return this.findById(id).update({name: newName});
   },
   /**
-   * Delete event by id
+   * Delete category by id
    * @param {Number} id 
    */
-  deleteEventById: function (id) {
+  deleteCategoryById: function (id) {
     return this.findByIdAndRemove(id, function(err){
       if(err) throw err;
    });
   },
   /**
-   * Delete event by No
+   * Delete category by name
    * @param {Number} no 
    */
-  deleteEventByNo: function (name) {
+  deleteCategoryByNo: function (name) {
     return this.findOneAndRemove({ "name" : name }, function(err){
       if(err) throw err;
    });
