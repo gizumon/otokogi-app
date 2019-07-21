@@ -1,0 +1,45 @@
+<template>
+  <select class="form-control" :name="name" @input="updateValue" @focus="$emit('focus', $event)" @blur="$emit('blur', $event)">
+    <option v-if="selectedData === null" selected class="msg" :value=null disabled>{{ msg }}</option>
+    <option v-else-if="selectedData !== null" class="msg" :value=null disabled>{{ msg }}</option>
+    <option v-for="option in optionsData" :value="option" :key="option._id" :selected="selectedData">
+      {{ option.name }}
+    </option>
+  </select>
+</template>
+
+<script>
+export default {
+  name: 'BaseSelect',
+  props: {
+    selected: { type: Object },
+    options: { type: Array, require: true },
+    name: { type: String, require: true }
+  },
+  data: function () {
+    return {
+      selectedData: this.selected,
+      optionsData: this.options,
+      msg: `-- Select ${this.name} --`
+    };
+  },
+  updated () {
+    const value = this.selectedData ? this.selectedData : null;
+    this.$emit('selected', value);
+  },
+  methods: {
+    updateValue: function (e) {
+      let value = e.target.selectedOptions ? e.target.selectedOptions[0]._value : null;
+      this.$emit('input', value);
+      this.$emit('selected', value);
+    }
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.msg {
+  color: #b95a42;
+}
+</style>

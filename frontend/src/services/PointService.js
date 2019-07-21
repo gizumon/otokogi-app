@@ -18,7 +18,7 @@ export default class PointService {
     /**
      * ポイントデータを全取得
      */
-    this.init = async function () {
+    this.getAll = async function () {
       await api.get(`/point`).then(async response => {
         self.points = response.data;
       }).catch(function (error) {
@@ -29,7 +29,7 @@ export default class PointService {
      * 指定したイベントにおけるポイントデータを取得
      * @param {String} userId
      */
-    this.initEventPoints = async function (eventId) {
+    this.getSelectedEvent = async function (eventId) {
       await api.get(`/point/${eventId}`).then(async response => {
         self.eventPoints = response.data;
       }).catch(function (error) {

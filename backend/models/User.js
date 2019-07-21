@@ -36,6 +36,11 @@ UserSchema.static({
     return this.findById(id).exec().then(result => {
       return result;
     });
+  },
+  deleteById: function(id) {
+    return this.findByIdAndRemove(id, function(err){
+      if(err) throw err;
+    });
   }
 });
 

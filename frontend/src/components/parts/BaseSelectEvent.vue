@@ -1,6 +1,6 @@
 <template>
-  <select id="selectEvent" name="event" class="form-control" >
-    <slot :options="options"></slot>
+  <select id="selectEvent" name="event" class="form-control" v-model="selectedEvent">
+    <!-- <slot :options="options"></slot> -->
     <option v-for="event in events" v-bind:key="event.no">
       {{ "【第" + event.no + "回】 " + event.name }}
     </option>
@@ -14,18 +14,22 @@ export default {
   name: 'BaseSelectEvent',
   data: function () {
     return {
-      events: []};
+      selectedEvent: {},
+      events: []
+    };
   },
-  async mounted () {
+  async created () {
     const eventService = new EventService();
     await eventService.getAllEvent();
     this.events = eventService.events;
-  },
-  updated (e) {
-    console.log('Vue updated...');
-    let value = e.target.selectedOptions.length ? e.target.selectedOptions[0]._value : null;
-    this.$emit('selectedEvent', value);
+    this.selectedEvent = this.events[this.events.length - 1];
+    console.log(this.selectedEvent, 'selected');
   }
+  // updated (e) {
+  //     console.log('Vue updated...');
+  //     // let value = e.target.selectedOptions.length ? e.target.selectedOptions[0]._value : null;
+  //     // this.$emit('selectedEvent', value);
+  // }
 };
 
 </script>

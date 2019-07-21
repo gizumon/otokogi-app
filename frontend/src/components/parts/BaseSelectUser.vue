@@ -14,14 +14,14 @@ export default {
   name: 'BaseSelectUser',
   data: function () {
     return {
-      users: []};
+      users: []
+    };
   },
   async mounted () {
     // ユーザー取得
     const userService = new UserService();
-    await userService.init();
+    await userService.getAll();
     this.users = userService.users;
-    console.log(this.users, '!!!!');
   }
 };
 

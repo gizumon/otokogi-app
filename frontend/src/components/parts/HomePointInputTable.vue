@@ -1,89 +1,85 @@
 <template>
   <div id="homePointInputTable">
-    <h3 class='vue-title'>{{selectedEvent.name}}</h3>
-    <v-client-table :data="tableData" :columns="columns" :options="options"></v-client-table>
+    <h3 class="table-title">Otokogi point</h3>
+    <v-client-table :data="tableData" :columns="columns" :options="options" ></v-client-table>
   </div>
 </template>
 
 <script>
-import PointService from '../../services/PointService';
-import UserService from '../../services/UserService';
-
 export default {
   name: 'HomePointInputTable',
+  props: {
+    participants: {type: Array, require: true},
+    points: {type: Array, require: true}
+  },
   data: function () {
     return {
-      selectedEvent: {_id: '5d2d3c5538658b33d82633fb'},
-      participants: [],
+      participantsData: this.participants,
+      pointsData: this.points,
       columns: ['no'],
       tableData: [],
       options: {
         headings: {
           no: 'No.'
         },
-        sortable: [
-          'yes'
-        ],
-        texts: {
-          filterPlaceholder: '検索する'
-        }
+        sortable: true,
+        filterable: false
       }
     };
   },
-  async mounted () {
-    const self = this;
-
-    // サービス生成
-    const userService = new UserService();
-    const pointService = new PointService();
-
-    // 各サービスを初期化
-    await userService.initEventParticipants(self.selectedEvent._id);
-    await pointService.initEventPoints(self.selectedEvent._id);
-
-    // イベント情報を取得
-    const participants = userService.eventParticipants;
-    const points = pointService.eventPoints;
-
-    for (let participant of participants) {
-      // ヘッダーの作成
-      // self.options.headings[participant._id] = participant.name;
-      self.$set(self.options.headings, participant._id, participant.name);
-      // カラム作成
-      self.columns.push(participant._id);
-      console.log(self.options.headings, 'self.options.headings');
-      console.log(self.columns, 'self.columns');
-    }
-
-    // テーブルデータの作成
-    let no = 0;
-    for (let point of points) {
-      no += 1;
-      const data = await self.formatTableData();
-      data['no'] = no;
-      data[point.userId] = point.point;
-      self.tableData.push(data);
-    }
+  mounted () {
   },
   methods: {
-    formatTableData () {
+    prepareColumns: function () {
+      this.columns.length = 0;
+      this.columns.push('no');
+      this.options.headings.length = 0;
+      this.options.headings['no'] = 'No.';
+      console.log(this.participantsData, 'participants in prepareColumns');
+      for (let participant of this.participantsData) {
+        console.log(participant, 'in the loop');
+        // カラム作成
+        this.columns.push(participant._id);
+        // ヘッダー作成
+        this.$set(this.options.headings, participant._id, participant.name);
+        console.log(this.columns, 'set column');
+      }
+      console.log('end of prepareColumn');
+    },
+    prepareTableData: async function () {
+      this.tableData.length = 0;
+      let no = 0;
+      for (let point of this.pointsData) {
+        no += 1;
+        let data = await this.formatTableData();
+        data['no'] = no;
+        data[point.userId] = point.point;
+        console.log(data, 'pushed data');
+        this.tableData.push(data);
+      }
+      console.log('end of prepareTableData');
+    },
+    formatTableData: function () {
       let dataFormat = {};
-      console.log(this.columns);
       for (let column of this.columns) {
+        console.log(column, 'column');
         dataFormat[column] = 0;
       }
-      console.log(dataFormat, 'data format');
+      console.log(dataFormat, 'dataFormat');
       return dataFormat;
     }
   },
   watch: {
-    // update table if data changes
-    // tableData: {
-    //   handler: function (newData) {
-    //     this.tabulator.replaceData(newData);
-    //   },
-    //   deep: true
-    // }
+    // participantsData: async function () {
+    //   await this.prepareColumns();
+    // },
+    pointsData: async function () {
+      console.log(this.participantsData, 'participants');
+      console.log(this.pointsData, 'points');
+      await this.prepareColumns();
+      await this.prepareTableData();
+      // this.$forceUpdate();
+    }
   }
 };
 

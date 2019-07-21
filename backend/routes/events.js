@@ -32,7 +32,6 @@ router.get('/', async function (req, res) {
  * @response イベント情報
  */
 router.get('/:eventId', async function (req, res) {
-  console.log(req.params.eventId, 'event');
   const events = await Event.getById(req.params.eventId);
   return res.json(events);
 });

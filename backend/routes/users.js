@@ -32,7 +32,6 @@ router.get('/', async function (req, res) {
  * @response ユーザー情報
  */
 router.get('/:userId', async function (req, res) {
-  console.log(req.params.userId,'req');
   const result = await User.getById(req.params.userId);
   return res.json(result);
 });
@@ -44,7 +43,6 @@ router.get('/:userId', async function (req, res) {
 //  */
 // router.post('/list', async function (req, res) {
 //   const result = [];
-//   console.log(req.params.);
 //   for (user in req.body.data) {
 //     const id = user.id;
 //     const name = await User.getById(user.id);

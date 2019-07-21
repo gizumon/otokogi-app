@@ -21,7 +21,6 @@ export default {
     // CORS対応
     api.get('/category')
       .then(function (response) {
-        console.log(response);
         self.categories = response.data;
       })
       .catch(function (error) {

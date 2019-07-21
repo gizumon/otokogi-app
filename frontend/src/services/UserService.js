@@ -21,10 +21,9 @@ export default class UserService {
     /**
      * 初期化処理
      */
-    this.init = async function () {
+    this.getAll = async function () {
       await api.get('/user').then((response) => {
         self.users = response.data;
-        console.log(self.users, 'users');
       }).catch(e => {
         console.error(`ERR: user api error: ${e}`);
       });
@@ -33,16 +32,13 @@ export default class UserService {
      * Eventで初期化
      * @param {String} userId
      */
-    this.initEventParticipants = async function (eventId) {
-      console.log(`initEventParticipants method is kicked with eventId: ${eventId}`);
+    this.getSelectedEventParticipants = async function (eventId) {
       await api.get(`/event/${eventId}`).then(async (response) => {
-        console.log(response, 'response');
         const participants = response.data.participants;
         for await (let participant of participants) {
           const data = await self.getUserById(participant.userId);
           self.eventParticipants.push(data);
         }
-        console.log(self.eventParticipants, 'participants');
       }).catch((error) => {
         console.error('ERR: Failed to get event information : ' + error);
       });

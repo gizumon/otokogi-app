@@ -27,40 +27,33 @@ export default class UserService {
     /**
      * 初期化処理
      */
-    this.getAllEvent = async function () {
+    this.getAll = async function () {
       await api.get('/event').then((response) => {
         self.events = response.data;
-        console.log(self.events, 'users');
       }).catch(e => {
         console.error(`ERR: user api error: ${e}`);
       });
-      /**
-     * イベントIDを設定
-     */
-      this.setSelectedEventId = function (eventId) {
-        self.selectedEventId = eventId;
-      };
-      /**
+    };
+    /**
      * Eventで初期化
      * @param {String} eventId
      */
-      this.getSelectedEvent = async function (eventId) {
-        await api.get(`/event/${eventId}`).then(async (response) => {
-          self.selectedEvent = response.data;
-        }).catch((error) => {
-          console.error('ERR: Failed to get event information : ' + error);
-        });
-      };
-      /**
+    this.getSelectedEvent = async function (eventId) {
+      await api.get(`/event/${eventId}`).then(async (response) => {
+        self.selectedEvent = response.data;
+      }).catch((error) => {
+        console.error('ERR: Failed to get event information : ' + error);
+      });
+    };
+    /**
      * ユーザー名の取得
      * @param userId
      */
-      this.getEventParticipants = async function (eventId) {
-        if (!self.selectedEvents) {
-          await self.initSelectedEvent(eventId);
-        }
-        return self.selectedEvent.participants;
-      };
+    this.getEventParticipants = async function (eventId) {
+      if (!self.selectedEvents) {
+        await self.initSelectedEvent(eventId);
+      }
+      return self.selectedEvent.participants;
     };
   }
 }
