@@ -34,6 +34,7 @@ export default class UserService {
      */
     this.getSelectedEventParticipants = async function (eventId) {
       await api.get(`/event/${eventId}`).then(async (response) => {
+        self.eventParticipants = [];
         const participants = response.data.participants;
         for await (let participant of participants) {
           const data = await self.getUserById(participant.userId);

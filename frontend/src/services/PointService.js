@@ -18,22 +18,52 @@ export default class PointService {
     /**
      * ポイントデータを全取得
      */
-    this.getAll = async function () {
-      await api.get(`/point`).then(async response => {
+    this.getAll = function () {
+      return api.get(`/point`).then(response => {
         self.points = response.data;
-      }).catch(function (error) {
-        console.error('ERR: Failed to get point information : ' + error);
+        return response.data;
+      }).catch((err) => {
+        console.error('ERR: Failed to get point information : ' + err);
+        return err.status;
       });
     };
     /**
      * 指定したイベントにおけるポイントデータを取得
      * @param {String} userId
      */
-    this.getSelectedEvent = async function (eventId) {
-      await api.get(`/point/${eventId}`).then(async response => {
-        self.eventPoints = response.data;
-      }).catch(function (error) {
-        console.error('ERR: Failed to get specified event point information : ' + error);
+    this.getSelectedEvent = function (eventId) {
+      return api.get(`/point/${eventId}`).then(res => {
+        self.eventPoints = res.data;
+        return res.status;
+      }).catch((err) => {
+        console.error('ERR: Failed to get specified event point information : ' + err);
+        return err.status;
+      });
+    };
+    /**
+     * ポイントの追加
+     * @param {Object} point
+     */
+    this.registPoint = function (point) {
+      return api.post(`/point`, point).then(async res => {
+        console.log(res.status, 'Success point regist');
+        return res.status;
+      }).catch(function (err) {
+        console.error('ERR: Failed to post specified event point information : ' + err);
+        return err.status;
+      });
+    };
+    /**
+     * ポイントの削除
+     * @param {String} pointId
+     */
+    this.deletePointById = function (id) {
+      return api.delete(`/point/${id}`).then(res => {
+        console.log(res.status, `Success point regist: ${id}`);
+        return res.status;
+      }).catch(function (err) {
+        console.error('ERR: Failed to post specified event point information : ' + err);
+        return err.status;
       });
     };
   }

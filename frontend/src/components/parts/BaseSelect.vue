@@ -20,7 +20,7 @@ export default {
     return {
       selectedData: this.selected,
       optionsData: this.options,
-      msg: `-- Select ${this.name} --`
+      msg: `- Select ${this.name} -`
     };
   },
   updated () {

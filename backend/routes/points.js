@@ -4,6 +4,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const cors = require('cors'); // corsポリシー対策
 const mongoose = require('mongoose');
+const { check, validationResult } = require('express-validator');
 
 // Body parser
 router.use(bodyParser.urlencoded({extended:false}));
@@ -12,6 +13,13 @@ router.use(cors());
 
 // Model呼びだし
 const Point = require('../models/Point');
+
+const validation = [
+  check('eventId', 'eventId is required and must be String').isString().exists(),
+  check('userId', 'userId is required and must be String').isString().exists(),
+  check('point', 'point is required and must be Number').matches(/\d+/).exists(),
+  check('category', 'category is required and must be String').isString().exists()
+];  
 
 // DB設定
 mongoose.connect('mongodb://localhost:27017/otokogiApp', {useNewUrlParser: true});
@@ -32,13 +40,16 @@ router.get('/:eventId', async function (req, res) {
  * @request 登録情報
  * @response 
  */
-router.post('/', function (req, res) {
-  if (!req.body){
-    return res.status(500).send('reqest body empty.');
+router.post('/', validation, async function (req, res) {
+  const errors = validationResult(req.body);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
   }
 
+  const maxNo = await Point.getMaxNo();
+  // console.log(maxNo, 'maxNo');
   const instance = new Point({
-    no: req.body.no,
+    no: maxNo + 1,
     eventId: req.body.eventId,
     userId: req.body.userId,
     point: req.body.point
@@ -51,6 +62,12 @@ router.post('/', function (req, res) {
           return res.status(500).send('Point created faild.');
       }
   });
+});
+
+router.delete('/:eventId', async function (req, res) {
+  const eventId = req.params.eventId;
+  const result = await Point.deleteById(eventId);
+  return res.json(result);
 });
 
 module.exports = router;

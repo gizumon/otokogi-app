@@ -1,11 +1,61 @@
 <template>
   <div id="homePointInputTable">
-    <h3 class="table-title">Otokogi point</h3>
-    <v-client-table :data="tableData" :columns="columns" :options="options" ></v-client-table>
+    <div class="table-headers">
+      <div class="left-buttons"></div>
+      <div class="center-buttons">
+        <li class="item"><font-awesome-icon icon="angle-double-left" :class="isFirstPage ? 'disabled' : 'clickable'" @click="flipPage(`first`)"/></li>
+        <li class="item"><font-awesome-icon icon="angle-left" :class="isFirstPage ? 'disabled' : 'clickable'" @click="flipPage(`back`)"/></li>
+        <li class="item">{{page}}</li>
+        <li class="item"><font-awesome-icon icon="angle-right" :class="isLastPage ? 'disabled' : 'clickable'" @click="flipPage('next')"/></li>
+        <li class="item"><font-awesome-icon icon="angle-double-right" :class="isLastPage ? 'disabled' : 'clickable'" @click="flipPage(`last`)"/></li>
+      </div>
+      <div class="right-buttons">
+      </div>
+    </div>
+    <div class="table-container col-12">
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <!-- <th @click="sortBy()" :class="{ active: options.sortKey == key }"> -->
+            <th class="table-index">
+              No.<br>
+              <font-awesome-icon v-if="options.sortOrders > 0" icon="sort-amount-up" @click="options.sortOrders = options.sortOrders * -1" :class="'fontColor_white'"/>
+              <font-awesome-icon v-else icon="sort-amount-down" @click="options.sortOrders = options.sortOrders * -1" :class="'fontColor_white'"/>
+            </th>
+            <th v-for="participant in participantsData" :key="participant._id">
+              {{ participant.name }}
+            </th>
+            <th class="table-index"><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred'" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="point-summary">
+            <td><font-awesome-icon icon="trophy" :class="'fontColor_lightYellow'" /></td>
+            <td v-for="participant in participantsData" :key="participant._id">
+              {{ pointSum(participant._id) }}
+            </td>
+            <td><font-awesome-icon icon="minus" /></td>
+          </tr>
+          <tr class="points-list" v-for="point in prepareData" :key="point._id">
+            <th class="table-index">{{ point.no }}</th>
+            <td v-for="participant in participantsData" :key="participant._id" class="t-col-5">
+              <span v-if="participant._id === point.userId">{{ point.point }}</span>
+              <span v-else>0</span>
+            </td>
+            <td><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred clickable'" @click="deleteRecordById(point._id)" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
+import Common from '../../assets/function/common';
+import PointService from '../../services/PointService';
+const common = new Common();
+const pointService = new PointService();
+
 export default {
   name: 'HomePointInputTable',
   props: {
@@ -16,75 +66,192 @@ export default {
     return {
       participantsData: this.participants,
       pointsData: this.points,
-      columns: ['no'],
-      tableData: [],
+      page: 0,
       options: {
-        headings: {
-          no: 'No.'
-        },
-        sortable: true,
-        filterable: false
-      }
+        sortOrders: -1,
+        recordsNum: 10
+      },
+      isFirstPage: true,
+      isLastPage: false
     };
   },
-  mounted () {
+  computed: {
+    prepareData: function () {
+      const startIndex = (this.page - 1) * this.options.recordsNum;
+      let displayedData = this.pointsData.slice();
+
+      for (let i = 0; i < displayedData.length; i++) {
+        displayedData[i].no = i + 1;
+      }
+      if (this.options.sortOrders < 0) {
+        displayedData = displayedData.reverse();
+      }
+
+      if (displayedData.length < this.options.recordsNum) {
+        return displayedData;
+      }
+      return displayedData.slice(startIndex, (startIndex + this.options.recordsNum));
+    }
   },
   methods: {
-    prepareColumns: function () {
-      this.columns.length = 0;
-      this.columns.push('no');
-      this.options.headings.length = 0;
-      this.options.headings['no'] = 'No.';
-      console.log(this.participantsData, 'participants in prepareColumns');
-      for (let participant of this.participantsData) {
-        console.log(participant, 'in the loop');
-        // カラム作成
-        this.columns.push(participant._id);
-        // ヘッダー作成
-        this.$set(this.options.headings, participant._id, participant.name);
-        console.log(this.columns, 'set column');
+    flipPage: function (page) {
+      switch (page) {
+        case 'first':
+          this.page = 1;
+          break;
+        case 'back':
+          this.page += -1;
+          break;
+        case 'next':
+          this.page += 1;
+          break;
+        case 'last':
+          this.page = Math.floor(this.pointsData.length / this.options.recordsNum) - 1;
+          break;
       }
-      console.log('end of prepareColumn');
     },
-    prepareTableData: async function () {
-      this.tableData.length = 0;
-      let no = 0;
-      for (let point of this.pointsData) {
-        no += 1;
-        let data = await this.formatTableData();
-        data['no'] = no;
-        data[point.userId] = point.point;
-        console.log(data, 'pushed data');
-        this.tableData.push(data);
+    deleteRecordById: async function (id) {
+      const status = await pointService.deletePointById(id);
+      if (status >= 200 && status <= 299) {
+        console.log('success delete point!');
+        this.$emit('isEdited');
+      } else {
+        console.erro(`ERR: Error point delete for ${id}\nstatus: ${status}`);
       }
-      console.log('end of prepareTableData');
     },
-    formatTableData: function () {
-      let dataFormat = {};
-      for (let column of this.columns) {
-        console.log(column, 'column');
-        dataFormat[column] = 0;
-      }
-      console.log(dataFormat, 'dataFormat');
-      return dataFormat;
+    pointSum: function (userId) {
+      let sum = 0;
+      this.pointsData.forEach(point => {
+        if (point.userId === userId) {
+          sum = sum + point.point;
+        }
+      });
+      return common.addFigure(sum);
     }
   },
   watch: {
-    // participantsData: async function () {
-    //   await this.prepareColumns();
-    // },
-    pointsData: async function () {
-      console.log(this.participantsData, 'participants');
-      console.log(this.pointsData, 'points');
-      await this.prepareColumns();
-      await this.prepareTableData();
-      // this.$forceUpdate();
+    pointsData: function () {
+      this.page = 1;
+      this.isFirstPage = (this.page <= 1);
+      this.isLastPage = (this.page >= Math.ceil(this.pointsData.length / this.options.recordsNum));
+    },
+    page: function () {
+      this.isFirstPage = (this.page <= 1);
+      this.isLastPage = (this.page >= Math.ceil(this.pointsData.length / this.options.recordsNum));
     }
   }
 };
-
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
 
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.clickable {
+  cursor: pointer;
+}
+.disabled {
+  pointer-events: none;
+  color: #c0c0c0;
+  cursor: default;
+}
+div.table-headers {
+  display: flex;
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 100%;
+  height: 20px;
+  .left-buttons {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: left;
+    .item {
+      display: flex;
+    }
+  }
+  .center-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .item {
+      display: block;
+      width: 50px;
+      margin: auto;
+    }
+  }
+  .right-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .item {
+      display: flex;
+      width: 20px;
+      margin: auto;
+    }
+  }
+}
+.table-container {
+  display: flex;
+  table {
+    line-height: 1.0;
+    table-layout: fixed;
+    .fontColor_white {
+      color: white;
+      cursor: pointer;
+    }
+    thead {
+      th {
+        padding: 0.5rem 0.25rem;
+        white-space: wrap;
+        word-break: break-all;
+        vertical-align: center;
+        &.table-index {
+          width: 3rem;
+        }
+      }
+    }
+    tbody {
+      .fontColor_darkred {
+        color: #8b0000;
+        cursor: pointer;
+      }
+      .fontColor_lightYellow {
+        color: #fff8dc;
+        cursor: pointer;
+      }
+      tr {
+        th {
+          &.table-index {
+            width: 3rem;
+        }
+        }
+        td {
+          text-align: center;
+        }
+        &.point-summary {
+          background-color: #708090;
+          color: #fff8dc;
+        }
+        &.points-list {
+          background-color: #efefef;
+          color: #393939;
+          > th {
+            color: #393939;
+          }
+          > td {
+            background-color: #efefef;
+            color: #778899;
+            font-size: 80%;
+          }
+        }
+      }
+    }
+  }
+}
+div {
+  text-align:center;
+  margin: auto;
+}
 </style>

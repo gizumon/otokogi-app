@@ -47,6 +47,14 @@ PointSchema.static({
     });
   },
   /**
+   * Get max no value in 
+   */
+  getMaxNo: function () {
+    return this.find().sort({no:-1}).limit(1).then(result => {
+      return result[0].no;
+    });
+  },
+  /**
    * Update otokogi point object
    * @param {String} id
    * @param {Object} updateData 
