@@ -19,9 +19,8 @@ export default {
   },
   async mounted () {
     // ユーザー取得
-    const userService = new UserService();
-    await userService.getAll();
-    this.users = userService.users;
+    await UserService.getAll();
+    this.users = UserService.users;
   }
 };
 

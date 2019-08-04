@@ -36,14 +36,19 @@
             </td>
             <td><font-awesome-icon icon="minus" /></td>
           </tr>
+          <!-- <template v-if="prepareData.length < 1">
+            <tr class="col-12">NO DATA</tr>
+          </template> -->
+          <!-- <template v-else> -->
           <tr class="points-list" v-for="point in prepareData" :key="point._id">
-            <th class="table-index">{{ point.no }}</th>
-            <td v-for="participant in participantsData" :key="participant._id" class="t-col-5">
-              <span v-if="participant._id === point.userId">{{ point.point }}</span>
-              <span v-else>0</span>
-            </td>
+            <th class="table-index"><a class="circle-btn" @click="editPoint(point)">{{ point.no }}</a></th>
+              <td v-for="participant in participantsData" :key="participant._id" class="t-col-5">
+                <span v-if="participant._id === point.userId">{{ point.point }}</span>
+                <span v-else>0</span>
+              </td>
             <td><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred clickable'" @click="deleteRecordById(point._id)" /></td>
           </tr>
+          <!-- </template> -->
         </tbody>
       </table>
     </div>
@@ -53,8 +58,9 @@
 <script>
 import Common from '../../assets/function/common';
 import PointService from '../../services/PointService';
+import Modal from '../../services/function/modal';
+
 const common = new Common();
-const pointService = new PointService();
 
 export default {
   name: 'HomePointInputTable',
@@ -106,12 +112,12 @@ export default {
           this.page += 1;
           break;
         case 'last':
-          this.page = Math.floor(this.pointsData.length / this.options.recordsNum) - 1;
+          this.page = Math.ceil(this.pointsData.length / this.options.recordsNum);
           break;
       }
     },
     deleteRecordById: async function (id) {
-      const status = await pointService.deletePointById(id);
+      const status = await PointService.deletePointById(id);
       if (status >= 200 && status <= 299) {
         console.log('success delete point!');
         this.$emit('isEdited');
@@ -127,6 +133,19 @@ export default {
         }
       });
       return common.addFigure(sum);
+    },
+    editPoint: function (point) {
+      Modal.editPoint(point, async function (registPoint) {
+        console.log(registPoint);
+        const status = await PointService.updatePoint(registPoint);
+        if (status >= 200 && status <= 299) {
+          console.log('success update point!');
+          Modal.alert('Update success!');
+          this.$emit('isEdited');
+        } else {
+          console.error(`ERR: Error point delete for ${registPoint._id}\nstatus: ${status}`);
+        }
+      });
     }
   },
   watch: {
@@ -147,6 +166,10 @@ export default {
 <style scoped lang="scss">
 .clickable {
   cursor: pointer;
+  &:hover {
+    -webkit-transform: translateY(2px);
+    transform: translateY(2px);
+  }
 }
 .disabled {
   pointer-events: none;
@@ -200,6 +223,10 @@ div.table-headers {
     .fontColor_white {
       color: white;
       cursor: pointer;
+      &:hover {
+        -webkit-transform: translateY(2px);
+        transform: translateY(2px);
+      }
     }
     thead {
       th {
@@ -216,16 +243,66 @@ div.table-headers {
       .fontColor_darkred {
         color: #8b0000;
         cursor: pointer;
+        &:hover {
+            color: #393939;
+            -webkit-transform: translateY(2px);
+            transform: translateY(2px);
+        }
       }
       .fontColor_lightYellow {
         color: #fff8dc;
         cursor: pointer;
+        &:hover {
+            color: #393939;
+            -webkit-transform: translateY(2px);
+            transform: translateY(2px);
+        }
       }
       tr {
         th {
           &.table-index {
             width: 3rem;
-        }
+            .circle-btn {
+              cursor: pointer;
+              position: relative;
+              display: inline-block;
+              font-weight: bold;
+              padding: 6px 0 4px;
+              text-decoration: none;
+              color: #4682b4;
+              transition: .4s;
+              &:before {
+                cursor: pointer;
+                position: absolute;
+                content: '';
+                width: 100%;
+                height: 2px;
+                top:100%;
+                left: 0;
+                border-radius: 3px;
+                background:#4682b4;
+                transition: .2s;
+              }
+              &:after {
+                position: absolute;
+                content: '';
+                width: 100%;
+                height: 2px;
+                top:0;
+                left: 0;
+                border-radius: 3px;
+                background:#4682b4;
+                transition: .2s;
+              }
+              &:hover:before {
+                top: -webkit-calc(100% - 2px);
+                top: calc(100% - 2px);
+              }
+              &:hover:after {
+                top: 2px;
+              }
+            }
+          }
         }
         td {
           text-align: center;
@@ -243,7 +320,7 @@ div.table-headers {
           > td {
             background-color: #efefef;
             color: #778899;
-            font-size: 80%;
+            font-size: 1rem;
           }
         }
       }

@@ -1,12 +1,12 @@
 <template>
   <div id="home-point-input">
-    <h3 class="table-title">Otokogi point</h3>
+    <h3 class="table-title">Otokogi point&nbsp;&nbsp;<font-awesome-icon icon="edit" /></h3>
     <div class="card m-3">
       <div class="card-header">
         <label class="sr-only" for="otokogiPoint">event</label>
         <div class="input-group">
           <div class="input-group-prepend">
-            <div class="input-group-text"><font-awesome-icon icon="external-link-alt" /></div>
+            <div class="input-group-text"><font-awesome-icon icon="calendar-check" /></div>
           </div>
           <base-select name="event" :options="events" :selected="selectedEvent" @input="onUpdateSelectedEvent" />
         </div>
@@ -63,16 +63,15 @@ import Modal from '../../services/function/modal';
 import BaseSelect from '../parts/BaseSelect';
 import HomePointInputTable from '../parts/HomePointInputTable';
 
-const eventService = new EventService();
-const userService = new UserService();
-const pointService = new PointService();
-const categoryService = new CategoryService();
+// const eventService = new EventService();
+// const userService = new UserService();
+// const pointService = new PointService();
+// const categoryService = new CategoryService();
 
 export default {
   name: 'PointInputTab',
   data: function () {
     return {
-      showModal: false,
       events: [],
       selectedEvent: {},
       selectedParticipant: {},
@@ -96,9 +95,6 @@ export default {
   methods: {
     addPoint: async function () {
       if (!(this.selectedEvent['_id'] && this.selectedParticipant['_id'] && this.inputPoint)) {
-        console.log(this.selectedEvent['_id']);
-        console.log(this.selectedParticipant['_id']);
-        console.log(this.inputPoint);
         Modal.alert('Please fill out all input');
         return false;
       }
@@ -106,9 +102,10 @@ export default {
       const point = {
         eventId: this.selectedEvent['_id'],
         userId: this.selectedParticipant['_id'],
+        category: this.selectedCategory['_id'],
         point: this.inputPoint
       };
-      const status = await pointService.registPoint(point);
+      const status = await PointService.registPoint(point);
       if (status >= 200 && status <= 299) {
         Modal.alert('Success!');
         this.inputPoint = '';
@@ -118,20 +115,25 @@ export default {
       }
     },
     getCategoryInfo: async function () {
-      await categoryService.getAll();
-      await this.setArrayData(this.categories, categoryService.categories);
+      await CategoryService.getAll();
+      await this.setArrayData(this.categories, CategoryService.categories);
+      console.log(CategoryService.categories, 'categories');
+      console.log(CategoryService.getCategories(), 'categories');
     },
     getEventInfo: async function () {
-      await eventService.getAll();
-      await this.setArrayData(this.events, eventService.events);
+      await EventService.getAll();
+      await this.setArrayData(this.events, EventService.events);
     },
     getParticipantInfo: async function () {
-      await userService.getSelectedEventParticipants(this.selectedEvent._id);
-      await this.setArrayData(this.eventParticipants, userService.eventParticipants);
+      await UserService.getSelectedEventParticipants(this.selectedEvent._id);
+      await this.setArrayData(this.eventParticipants, UserService.eventParticipants);
     },
     getPointInfo: async function () {
-      await pointService.getSelectedEvent(this.selectedEvent._id);
-      await this.setArrayData(this.eventPoints, pointService.eventPoints);
+      await PointService.getSelectedEvent(this.selectedEvent._id);
+      console.log(PointService.eventPoints, 'event point');
+      await this.setArrayData(this.eventPoints, PointService.eventPoints);
+      console.log(this.eventPoints, 'event point');
+      this.$forceUpdate();
     },
     onUpdateSelectedEvent: function (selectedValue) {
       this.$set(this, 'selectedEvent', selectedValue);
@@ -145,8 +147,12 @@ export default {
     setArrayData: function (target, array) {
       // targetの初期化
       target.length = 0;
-      for (let i = 0; i < array.length; i++) {
-        this.$set(target, i, array[i]);
+      if (array.length > 0) {
+        for (let i = 0; i < array.length; i++) {
+          this.$set(target, i, array[i]);
+        }
+      } else {
+        this.$forceUpdate();
       }
     }
   },
@@ -187,5 +193,8 @@ a {
 .input-group-text {
   width: 40px;
   text-align: center;
+}
+.flip-horizontal {
+    transform: scale(-1, 1);
 }
 </style>

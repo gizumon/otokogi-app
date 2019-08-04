@@ -1,8 +1,8 @@
 <template>
   <select class="form-control" :name="name" @input="updateValue" @focus="$emit('focus', $event)" @blur="$emit('blur', $event)">
-    <option v-if="selectedData === null" selected class="msg" :value=null disabled>{{ msg }}</option>
-    <option v-else-if="selectedData !== null" class="msg" :value=null disabled>{{ msg }}</option>
-    <option v-for="option in optionsData" :value="option" :key="option._id" :selected="selectedData">
+    <option v-if="selected === null" selected class="msg" :value=null disabled>{{ msg }}</option>
+    <option v-else class="msg" :value=null disabled>{{ msg }}</option>
+    <option v-for="option in optionsData" :value="option" :key="option._id" :selected="isSelected(selected, option)">
       {{ option.name }}
     </option>
   </select>
@@ -18,20 +18,25 @@ export default {
   },
   data: function () {
     return {
-      selectedData: this.selected,
       optionsData: this.options,
       msg: `- Select ${this.name} -`
     };
   },
-  updated () {
-    const value = this.selectedData ? this.selectedData : null;
-    this.$emit('selected', value);
+  mounted () {
   },
+  // updated () {
+  //   const value = this.selectedData ? this.selectedData : null;
+  //   this.$emit('selected', value);
+  // },
   methods: {
     updateValue: function (e) {
       let value = e.target.selectedOptions ? e.target.selectedOptions[0]._value : null;
       this.$emit('input', value);
       this.$emit('selected', value);
+    },
+    isSelected: function (selected, option) {
+      if (!selected) return false;
+      return selected['_id'] === option['_id'];
     }
   }
 };

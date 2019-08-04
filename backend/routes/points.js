@@ -65,8 +65,16 @@ router.post('/', validation, async function (req, res) {
 });
 
 router.delete('/:eventId', async function (req, res) {
-  const eventId = req.params.eventId;
-  const result = await Point.deleteById(eventId);
+  const result = await Point.deleteById(req.params.eventId);
+  return res.json(result);
+});
+
+router.patch('/', validation, async function (req, res) {
+  const errors = validationResult(req.body);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const result = await Point.updateById(req.body._id, req.body);
   return res.json(result);
 });
 

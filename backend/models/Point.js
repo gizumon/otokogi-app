@@ -20,6 +20,9 @@ let PointSchema = new Schema({
     type: Number,
     required: true
   },
+  category: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now

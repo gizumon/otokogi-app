@@ -16,6 +16,15 @@ export default {
   },
   openComponent (component) {
   },
+  editPoint (point, onOk) {
+    store.dispatch(OPEN_MODAL, {
+      component: 'modal-point-input',
+      params: {
+        point: point,
+        onOk: onOk
+      }
+    });
+  },
   close () {
     store.dispatch(CLOSE_MODAL);
   },

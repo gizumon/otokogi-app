@@ -14,46 +14,72 @@ import api from '../api/index';
 //   createdAt?: Date,
 // }
 
-export default class UserService {
-  eventId = '';
-  events = [];
-  selectedEvent = {};
-
+export default class EventService {
+  /**
+   * static variables
+   */
+  _eventId = '';
+  _events = [];
+  _selectedEvent = {};
   /**
    * 全ユーザーを取得
    */
-  constructor () {
-    const self = this;
-    /**
-     * 初期化処理
-     */
-    this.getAll = async function () {
-      await api.get('/event').then((response) => {
-        self.events = response.data;
-      }).catch(e => {
-        console.error(`ERR: user api error: ${e}`);
-      });
-    };
-    /**
-     * Eventで初期化
-     * @param {String} eventId
-     */
-    this.getSelectedEvent = async function (eventId) {
-      await api.get(`/event/${eventId}`).then(async (response) => {
-        self.selectedEvent = response.data;
-      }).catch((error) => {
-        console.error('ERR: Failed to get event information : ' + error);
-      });
-    };
-    /**
-     * ユーザー名の取得
-     * @param userId
-     */
-    this.getEventParticipants = async function (eventId) {
-      if (!self.selectedEvents) {
-        await self.initSelectedEvent(eventId);
-      }
-      return self.selectedEvent.participants;
-    };
+  // constructor () {
+  // }
+  get eventId () {
+    return this._eventId;
+  }
+  get events () {
+    return this._events;
+  }
+  get selectedEvent () {
+    return this._selectedEvent;
+  }
+  set eventId (val) {
+    this._eventId = val;
+  }
+  set events (val) {
+    this._events = val;
+  }
+  set selectedEvent (val) {
+    this._selectedEvent = val;
+  }
+  /**
+   * 初期化処理
+   * @return {Srting} status
+   */
+  static getAll () {
+    return api.get('/event').then((res) => {
+      this.events = res.data;
+      return res.status;
+    }).catch(e => {
+      console.error(`ERR: user api error: ${e}`);
+      return e.status;
+    });
+  }
+  /**
+   * Eventで初期化
+   * @param {String} eventId
+   * @return {String} status
+   */
+  static getSelectedEvent (eventId) {
+    return api.get(`/event/${eventId}`).then((res) => {
+      this.selectedEvent = res.data;
+      return res.status;
+    }).catch((e) => {
+      console.error('ERR: Failed to get event information : ' + e);
+      return e.status;
+    });
+  }
+  /**
+   * ユーザー名の取得
+   * @param eventId
+   * @return {Array} participants
+   */
+  static getEventParticipants (eventId) {
+    if (!this.selectedEvents) {
+      this.getSelectedEvent(eventId);
+    }
+    return this.selectedEvent.participants;
   }
 }

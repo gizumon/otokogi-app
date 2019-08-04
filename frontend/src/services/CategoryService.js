@@ -6,23 +6,39 @@ import api from '../api/index';
 //   createdAt?: Number
 // }
 
-export default class UserService {
-  categories = [];
-
+export default class CategoryService {
   /**
-   * コンストラクタ (全ユーザーを取得)
+   * static variables
    */
-  constructor () {
-    const self = this;
-    /**
-     * 初期化処理
-     */
-    this.getAll = async function () {
-      await api.get('/category').then((response) => {
-        self.categories = response.data;
-      }).catch(e => {
-        console.error(`ERR: user api error: ${e}`);
-      });
-    };
+  _categories = [];
+  /**
+   * コンストラクタ
+   */
+  // constructor () {
+  //   CategoryService.getAll();
+  // }
+  /**
+   * Getter / Setter
+   */
+  get categories () {
+    return this._categories;
+  }
+  set categories (val) {
+    this._categories = val;
+  }
+  /**
+   * 初期化処理
+   */
+  static getAll () {
+    return api.get('/category').then((res) => {
+      this.categories = res.data;
+      return res.status;
+    }).catch(e => {
+      console.error(`ERR: user api error: ${e}`);
+      return e.status;
+    });
+  }
+  static getCategories () {
+    return this.categories;
   }
 }
