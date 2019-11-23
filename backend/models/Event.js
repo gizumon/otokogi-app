@@ -28,13 +28,17 @@ let EventSchema = new Schema({
     require: true,
     default: Date.now,
   },
+  participants: {
+    type: Array,
+    require: true
+  },
   winner: {
-    type: Number,
-    default: 0,
+    type: String,
+    default: '未決',
   },
   loser: {
-    type: Number,
-    default: 0,
+    type: String,
+    default: '未決',
   },
   TotalPoint: {
     type: Number,
@@ -48,12 +52,27 @@ let EventSchema = new Schema({
 
 // Event schena methods
 EventSchema.static({
-  getAll: function () {
-    this.find().exec( (err, events) => {
-      if (err) return handleError(err);
-      return this.result = events;
-    });    
-    return this.result;
+  /**
+   * Get all event 
+   */
+  getAll: function() {
+    return this.find().exec().then(results => {
+      return results;
+    });
+  },
+  /**
+   * Get event by id
+   * @param {String} id 
+   */
+  getById: function(id) {
+    return this.findById(id).exec().then(result => {
+      return result;
+    });
+  },
+  deleteById: function(id) {
+    return this.findByIdAndRemove(id, function(err){
+      if(err) throw err;
+    });
   }
 });
 

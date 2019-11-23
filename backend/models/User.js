@@ -27,17 +27,25 @@ let UserSchema = new Schema({
 
 // User schena methods
 UserSchema.static({
-  getAll: function () {
-    this.find().exec( (err, users) => {
-      if (err) return handleError(err);
-      return this.result = users;
-    });    
-    return this.result;
+  getAll: function() {
+    return this.find().exec().then(results => {
+      return results;
+    });
+  },
+  getById: function(id) {
+    return this.findById(id).exec().then(result => {
+      return result;
+    });
+  },
+  deleteById: function(id) {
+    return this.findByIdAndRemove(id, function(err){
+      if(err) throw err;
+    });
   }
 });
 
 UserSchema.method({
-  getUserById: function (id) {
+  getById: function (id) {
     return this.findById(id);
   },
   updateUserName: function (id, name) {

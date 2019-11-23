@@ -1,6 +1,6 @@
 <template>
-  <select id="selectEvent" name="event" class="form-control">
-    <option value='' disabled selected style='display:none;'>Select Event</option>
+  <select id="selectEvent" name="event" class="form-control" v-model="selectedEvent">
+    <!-- <slot :options="options"></slot> -->
     <option v-for="event in events" v-bind:key="event.no">
       {{ "【第" + event.no + "回】 " + event.name }}
     </option>
@@ -8,26 +8,27 @@
 </template>
 
 <script>
-import Axios from 'axios';
+import EventService from '../../services/EventService';
+
 export default {
   name: 'BaseSelectEvent',
   data: function () {
     return {
-      events: []};
+      selectedEvent: {},
+      events: []
+    };
   },
-  mounted () {
-    const self = this;
-    // CORS対応
-    Axios.get('http://localhost:3000/api/v1/event', {headers: {'Access-Control-Allow-Origin': '*'}})
-      .then(function (response) {
-        console.log(response);
-        self.events = response.data;
-      })
-      .catch(function (error) {
-        console.error('ERR: Failed to get events information : ' + error);
-      });
+  async created () {
+    const eventService = new EventService();
+    await eventService.getAllEvent();
+    this.events = eventService.events;
+    this.selectedEvent = this.events[this.events.length - 1];
+    console.log(this.selectedEvent, 'selected');
   }
-  // methods: {
+  // updated (e) {
+  //     console.log('Vue updated...');
+  //     // let value = e.target.selectedOptions.length ? e.target.selectedOptions[0]._value : null;
+  //     // this.$emit('selectedEvent', value);
   // }
 };
 

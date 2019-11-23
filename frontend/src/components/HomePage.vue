@@ -38,19 +38,21 @@
         </b-tabs>
       </div>
     </div>
-    <base-modal v-if="showModal">
-      <template v-slot:header>
-        <h1>test title</h1>
-      </template>
-      <template v-slot:body>
-        <p>こんてんつ</p>
-        <p>Content</p>
-        <p>コンテンツ</p>
-      </template>
-      <template v-slot:footer>
-        <button @click="showModal = false">Close</button>
-      </template>
-    </base-modal>
+    <div id="modals">
+      <base-modal v-if="showModal">
+        <template v-slot:header>
+          <h1>test title</h1>
+        </template>
+        <template v-slot:body>
+          <p>こんてんつ</p>
+          <p>Content</p>
+          <p>コンテンツ</p>
+        </template>
+        <template v-slot:footer>
+          <button @click="showModal = false">Close</button>
+        </template>
+      </base-modal>
+    </div>
   </div>
 </template>
 
@@ -59,7 +61,7 @@ import PointInputTab from './tabs/HomePointInputTab';
 import MemberSetTab from './tabs/HomeMemberSetTab';
 import EventSetTab from './tabs/HomeEventSetTab';
 import PowerwordRegistTab from './tabs/HomePowerwordRegistTab';
-import BaseModal from './parts/BaseModal';
+
 // import Methods from '@/api/methods';
 
 export default {
@@ -75,8 +77,7 @@ export default {
     'point-input-tab': PointInputTab,
     'member-set-tab': MemberSetTab,
     'event-set-tab': EventSetTab,
-    'powerword-regist-tab': PowerwordRegistTab,
-    'base-modal': BaseModal
+    'powerword-regist-tab': PowerwordRegistTab
   }
   // },
   // methods: {
