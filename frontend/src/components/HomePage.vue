@@ -25,16 +25,16 @@
           </b-tab>
           <b-tab title="Forth">
             <template slot="title">
-              Powerword
+              Pword
             </template>
             <powerword-regist-tab />
           </b-tab>
-          <b-tab title="Fifth" disabled>
+          <!-- <b-tab title="Fifth" disabled>
             <template slot="title">
               Summary
             </template>
             <div class="container"><div class="card"><div>TBD</div></div></div>
-          </b-tab>
+          </b-tab> -->
         </b-tabs>
       </div>
     </div>

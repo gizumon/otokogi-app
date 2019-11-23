@@ -63,7 +63,7 @@ PointSchema.static({
    * @param {Object} updateData 
    */
   updateById: function (id, updateData) {
-    return this.findById(id).update(updateData);
+    return this.findById(id).updateMany(updateData);
   },
   deleteById: function(id) {
     return this.findByIdAndRemove(id, function(err){
@@ -97,6 +97,6 @@ PointSchema.method({
   }
 });
 
-const Category = mongoose.model('Point', PointSchema);
+const Point = mongoose.model('Point', PointSchema);
 
-module.exports = Category;
+module.exports = Point;

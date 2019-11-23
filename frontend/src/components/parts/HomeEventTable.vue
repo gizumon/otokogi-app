@@ -1,5 +1,5 @@
 <template>
-  <div id="homePointInputTable">
+  <div id="homeEventTable">
     <div class="table-headers">
       <div class="left-buttons"></div>
       <div class="center-buttons">
@@ -17,36 +17,46 @@
         <thead class="thead-dark">
           <tr>
             <!-- <th @click="sortBy()" :class="{ active: options.sortKey == key }"> -->
-            <th class="table-index">
+            <th class="table-index t-col-10">
               No.<br>
               <font-awesome-icon v-if="options.sortOrders > 0" icon="sort-amount-up" @click="options.sortOrders = options.sortOrders * -1" :class="'fontColor_white'"/>
               <font-awesome-icon v-else icon="sort-amount-down" @click="options.sortOrders = options.sortOrders * -1" :class="'fontColor_white'"/>
             </th>
-            <th v-for="participant in participantsData" :key="participant._id">
-              {{ participant.name }}
-            </th>
-            <th class="table-index"><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred'" /></th>
+            <th class="table-index t-col-30 t-title">Title</th>
+            <th class="table-index t-col-10 pc">Date</th>
+            <!-- <th class="table-index t-col-15">Destinations</th> -->
+            <th class="table-index t-col-10"><span class="pc">Total </span>P</th>
+            <th class="table-index t-col-15">Win<span class="pc">ner</span></th>
+            <th class="table-index t-col-15">Lose<span class="pc">r</span></th>
+            <th class="table-index t-col-10"><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred'" /></th>
           </tr>
         </thead>
         <tbody>
-          <tr class="point-summary">
+          <!-- <tr class="point-summary">
             <td><font-awesome-icon icon="trophy" :class="'fontColor_lightYellow'" /></td>
             <td v-for="participant in participantsData" :key="participant._id">
               {{ pointSum(participant._id) }}
             </td>
             <td><font-awesome-icon icon="minus" /></td>
-          </tr>
+          </tr> -->
           <!-- <template v-if="prepareData.length < 1">
             <tr class="col-12">NO DATA</tr>
           </template> -->
           <!-- <template v-else> -->
-          <tr class="points-list" v-for="point in prepareData" :key="point._id">
-            <th class="table-index"><a class="circle-btn" @click="editRecord(point)">{{ point.no }}</a></th>
-              <td v-for="participant in participantsData" :key="participant._id" class="t-col-5">
-                <span v-if="participant._id === point.userId">{{ point.point }}</span>
-                <span v-else>0</span>
-              </td>
-            <td><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred clickable'" @click="deleteRecordById(point._id)" /></td>
+          <tr class="events-list" v-for="record in prepareData" :key="record._id">
+            <th class="table-index"><a class="circle-btn" @click="editRecord(record)">{{ record.no }}</a></th>
+            <td class="td-title">{{ record.name }}</td>
+            <td class="pc-col">{{ formatDate(record.dateFrom,'YY/MM') }}</td>
+            <!-- <td class="td-select">
+              <select class="" v-if="record.destinations.length > 0">
+                <option v-for="(destination) in record.destinations" v-bind:key="destination">{{ destination }}</option>
+              </select>
+              <span v-else class="">No data</span>
+            </td> -->
+            <td class="clickable"><a @click="updateSummary(record._id)" >{{ addFigure(record.TotalPoint) }}</a></td>
+            <td class="">{{ record.winner }}</td>
+            <td class="">{{ record.loser }}</td>
+            <td><font-awesome-icon icon="trash-alt" :class="'fontColor_darkred clickable'" @click="deleteRecordById(record._id)" /></td>
           </tr>
           <!-- </template> -->
         </tbody>
@@ -57,22 +67,21 @@
 
 <script>
 import Common from '../../assets/function/common';
-import PointService from '../../services/PointService';
+import EventService from '../../services/EventService';
 import Modal from '../../services/function/modal';
+import moment from 'moment';
 
 const common = new Common();
 
 export default {
-  name: 'HomePointInputTable',
+  name: 'HomeEventTable',
   props: {
-    participants: {type: Array, require: true},
-    points: {type: Array, require: true}
+    events: {type: Array, require: true}
   },
   data: function () {
     return {
-      participantsData: this.participants,
-      pointsData: this.points,
-      page: 0,
+      eventsData: [],
+      page: 1,
       options: {
         sortOrders: -1,
         recordsNum: 10
@@ -84,11 +93,9 @@ export default {
   computed: {
     prepareData: function () {
       const startIndex = (this.page - 1) * this.options.recordsNum;
-      let displayedData = this.pointsData.slice();
+      let displayedData = this.eventsData.slice();
 
-      for (let i = 0; i < displayedData.length; i++) {
-        displayedData[i].no = i + 1;
-      }
+      displayedData.sort(function (fr, bk) { return fr.no - bk.no; });
       if (this.options.sortOrders < 0) {
         displayedData = displayedData.reverse();
       }
@@ -98,6 +105,9 @@ export default {
       }
       return displayedData.slice(startIndex, (startIndex + this.options.recordsNum));
     }
+  },
+  created () {
+    this.setArrayData(this.eventsData, this.events);
   },
   methods: {
     flipPage: function (page) {
@@ -112,52 +122,64 @@ export default {
           this.page += 1;
           break;
         case 'last':
-          this.page = Math.ceil(this.pointsData.length / this.options.recordsNum);
+          this.page = Math.ceil(this.eventsData.length / this.options.recordsNum);
           break;
       }
     },
-    deleteRecordById: async function (id) {
-      const status = await PointService.deleteById(id);
-      if (status >= 200 && status <= 299) {
-        console.log('success delete point!');
-        this.$emit('isEdited');
+    formatDate: function (date, format) {
+      return moment(date).format(format);
+    },
+    addFigure: function (val) {
+      return common.addFigure(val);
+    },
+    updateSummary: async (eventId) => {
+      await EventService.updateSummary(eventId);
+      this.isEmit('isEdited');
+    },
+    setArrayData: function (target, array) {
+      // targetの初期化
+      target.length = 0;
+      if (array.length > 0) {
+        for (let i = 0; i < array.length; i++) {
+          this.$set(target, i, array[i]);
+        }
       } else {
-        console.erro(`ERR: Error point delete for ${id}\nstatus: ${status}`);
+        this.$forceUpdate();
       }
     },
-    pointSum: function (userId) {
-      let sum = 0;
-      this.pointsData.forEach(point => {
-        if (point.userId === userId) {
-          sum = sum + Number(point.point);
+    editRecord: (event) => {
+      Modal.editEvent(event, async (registData) => {
+        console.log(registData);
+        const status = await EventService.update(registData['_id'], registData);
+        if (status >= 200 && status <= 299) {
+          console.log('success update point!');
+          Modal.alert('Update success!');
+          this.$emit('isEdited');
+        } else {
+          console.error(`ERR: Error PATCH event for ${event._id}\nstatus: ${status}`);
         }
       });
-      return common.addFigure(sum);
     },
-    editRecord: function (point) {
-      Modal.editPoint(point, async function (registPoint) {
-        console.log(registPoint);
-        PointService.update(registPoint._id, registPoint).then(res => {
-          if (res.status >= 200 && res.status <= 299) {
-            console.log('success update point!');
-            Modal.alert('Update success!');
-            this.$emit('isEdited');
-          } else {
-            console.error(`ERR: Error point delete for ${registPoint._id}\nstatus: ${status}`);
-          }
-        });
-      });
+    deleteRecordById: async (id) => {
+      const status = await EventService.deleteById(id);
+      if (status >= 200 && status <= 299) {
+        console.log('success DELETE event!');
+        this.$emit('isEdited');
+      } else {
+        console.error(`ERR: Error DELETE event for ${id}\nstatus: ${status}`);
+        Modal.alert('Failed to delete record...');
+      }
     }
   },
   watch: {
-    pointsData: function () {
+    eventsData: function () {
       this.page = 1;
-      // this.isFirstPage = (this.page <= 1);
-      // this.isLastPage = (this.page >= Math.ceil(this.pointsData.length / this.options.recordsNum));
+      this.isFirstPage = (this.page <= 1);
+      this.isLastPage = (this.page >= Math.ceil(this.eventsData.length / this.options.recordsNum));
     },
     page: function () {
       this.isFirstPage = (this.page <= 1);
-      this.isLastPage = (this.page >= Math.ceil(this.pointsData.length / this.options.recordsNum));
+      this.isLastPage = (this.page >= Math.ceil(this.eventsData.length / this.options.recordsNum));
     }
   }
 };
@@ -231,12 +253,20 @@ div.table-headers {
     }
     thead {
       th {
+        // display: table-cell;
         padding: 0.5rem 0.25rem;
         white-space: wrap;
         word-break: break-all;
         vertical-align: center;
         &.table-index {
-          width: 3rem;
+          width: 2rem;
+          &.t-col-05 { width: 5%; }
+          &.t-col-10 { width: 10%; }
+          &.t-col-15 { width: 15%; }
+          &.t-col-20 { width: 20%; }
+          &.t-col-30 { width: 30%; }
+          &.t-col-35 { width: 35%; }
+          &.t-col-40 { width: 40%; }
         }
       }
     }
@@ -262,7 +292,7 @@ div.table-headers {
       tr {
         th {
           &.table-index {
-            width: 3rem;
+            width: 2rem;
             .circle-btn {
               cursor: pointer;
               position: relative;
@@ -312,7 +342,7 @@ div.table-headers {
           background-color: #708090;
           color: #fff8dc;
         }
-        &.points-list {
+        &.events-list {
           background-color: #efefef;
           color: #393939;
           > th {
@@ -322,6 +352,32 @@ div.table-headers {
             background-color: #efefef;
             color: #778899;
             font-size: 1rem;
+            &.td-title {
+              text-align: left;
+              font-size: 0.9rem;
+              word-break: break-all;
+              overflow-x: auto;
+            }
+            &.td-select {
+              margin: 0;
+              padding: 0;
+              select {
+              width: 100%;
+              height: 100%;
+              border: none;
+              background-color: #efefef;
+              color: #778899;
+              font-size: 1rem;
+              padding: 0.75rem;
+              }
+            }
+            &.clickable > a {
+              cursor: pointer;
+              border-bottom: solid;
+              &:hover {
+                border-bottom-color: darkred;
+              }
+            }
           }
         }
       }

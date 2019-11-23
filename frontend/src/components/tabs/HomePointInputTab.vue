@@ -41,7 +41,7 @@
               </div>
           </div>
           <div class="col-6 my-1">
-            <button type="button" class="btn btn-primary float-right col-4" @click="addPoint">
+            <button type="button" class="btn btn-primary float-right col-4" @click="addRecord">
               <font-awesome-icon icon="plus" />
             </button>
           </div>
@@ -49,7 +49,7 @@
       </form>
       </div>
     </div>
-    <home-point-input-table :participants="eventParticipants" :points="eventPoints" @isEdited="getPointInfo()" />
+    <home-point-input-table :participants="eventParticipants" :points="eventPoints" @isEdited="onUpdatedTable()" />
   </div>
 </template>
 
@@ -79,7 +79,8 @@ export default {
       inputPoint: null,
       eventParticipants: [],
       eventPoints: [],
-      categories: []
+      categories: [],
+      isInitialized: false
     };
   },
   components: {
@@ -87,48 +88,49 @@ export default {
     'home-point-input-table': HomePointInputTable
   },
   async created () {
-    this.getCategoryInfo();
+    this.initCategoryInfo();
     // イベント関連情報取得
-    await this.getEventInfo();
+    await this.initEventInfo();
     this.$set(this, 'selectedEvent', this.events[this.events.length - 1]);
+    this.isInitialized = true;
+    console.log(this.eventParticipants, 'event patrticipants');
   },
   methods: {
-    addPoint: async function () {
+    addRecord: async function () {
       if (!(this.selectedEvent['_id'] && this.selectedParticipant['_id'] && this.inputPoint)) {
         Modal.alert('Please fill out all input');
         return false;
       }
-      const self = this;
       const point = {
         eventId: this.selectedEvent['_id'],
         userId: this.selectedParticipant['_id'],
-        category: this.selectedCategory['_id'],
+        categoryId: this.selectedCategory['_id'],
         point: this.inputPoint
       };
-      const status = await PointService.registPoint(point);
+      const status = await PointService.regist(point);
       if (status >= 200 && status <= 299) {
         Modal.alert('Success!');
         this.inputPoint = '';
-        self.getPointInfo();
+        this.isInitialized = false;
       } else {
         Modal.alert('Failed...');
       }
     },
-    getCategoryInfo: async function () {
+    initCategoryInfo: async function () {
       await CategoryService.getAll();
       await this.setArrayData(this.categories, CategoryService.categories);
       console.log(CategoryService.categories, 'categories');
-      console.log(CategoryService.getCategories(), 'categories');
     },
-    getEventInfo: async function () {
+    initEventInfo: async function () {
       await EventService.getAll();
       await this.setArrayData(this.events, EventService.events);
     },
-    getParticipantInfo: async function () {
+    initParticipantInfo: async function () {
       await UserService.getSelectedEventParticipants(this.selectedEvent._id);
       await this.setArrayData(this.eventParticipants, UserService.eventParticipants);
     },
-    getPointInfo: async function () {
+    initPointInfo: async function () {
+      // PointService.getAll();
       await PointService.getSelectedEvent(this.selectedEvent._id);
       console.log(PointService.eventPoints, 'event point');
       await this.setArrayData(this.eventPoints, PointService.eventPoints);
@@ -143,6 +145,9 @@ export default {
     },
     onUpdateSelectedCategory: function (selectedValue) {
       this.$set(this, 'selectedCategory', selectedValue);
+    },
+    onUpdatedTable: function () {
+      this.isInitialized = true;
     },
     setArrayData: function (target, array) {
       // targetの初期化
@@ -159,14 +164,14 @@ export default {
   watch: {
     selectedEvent: async function () {
       console.log(this.selectedEvent, 'Watcher kicked: selected event');
-      await this.getParticipantInfo();
-      await this.getPointInfo();
+      await this.initParticipantInfo();
+      await this.initPointInfo();
     },
-    isTableEdit: async function () {
+    isInitialized: async function () {
       console.log('Watcher kicked: table is edited');
-      await this.getPointInfo();
-      if (this.isTableEdited) {
-        this.isTableEdited = false;
+      if (!this.isInitialized) {
+        await this.initPointInfo();
+        this.isInitialized = true;
       }
     }
   }

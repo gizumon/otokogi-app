@@ -16,3 +16,24 @@ body {
         text-align: center;
     }
 }
+
+/*-- PC版表示CSS  --*/
+.phone {
+  display: none;
+}
+  
+/*-- スマホ版表示CSS  --*/
+@media screen and (max-width: 768px) {
+  .pc {
+    display: none;
+  }
+  .pc-col {
+    display: none;
+  }
+//   .phone {
+//     display: block;
+//   }
+//   .pc-col {
+//     display: table-cell;
+//   }
+}

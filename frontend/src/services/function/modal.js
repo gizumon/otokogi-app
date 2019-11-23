@@ -25,6 +25,15 @@ export default {
       }
     });
   },
+  editEvent (event, onOk) {
+    store.dispatch(OPEN_MODAL, {
+      component: 'modal-event-edit',
+      params: {
+        event: event,
+        onOk: onOk
+      }
+    });
+  },
   close () {
     store.dispatch(CLOSE_MODAL);
   },
