@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const conf = require('config');
+const dbUrl = conf.db.uri.replace('${USER}',conf.db.user).replace('${PASS}',conf.db.pass);
 
 const bodyParser = require('body-parser');
 const cors = require('cors'); // corsポリシー対策
@@ -29,7 +31,7 @@ const validation = [
 // ];
 
 // DB設定
-mongoose.connect('mongodb://localhost:27017/otokogiApp', {useNewUrlParser: true});
+mongoose.connect(`${dbUrl}/otokogiApp?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 /**
  * 指定したイベントIDの漢気ポイント情報の全取得
@@ -48,6 +50,7 @@ router.get('/:eventId', async function (req, res) {
  * @response 
  */
 router.post('/', validation, async function (req, res) {
+  console.log('post in');
   const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });

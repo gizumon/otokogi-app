@@ -86,7 +86,7 @@ EventSchema.static({
    */
   getMaxNo: function () {
     return this.find().sort({no:-1}).limit(1).then(result => {
-      return result[0].no;
+      return result[0] ? result[0].no : 0;
     });
   }
 });

@@ -13,7 +13,7 @@ content-type: application/json
 ### ユーザー全件取得
 GET http://localhost:3000/api/v1/user/
 
-# @userId = 5d235ac758d4f11128a47d27
+# @userId = 5dda4f6125ae073b34dd90c7
 
 ### 指定IDのユーザー取得
 GET http://localhost:3000/api/v1/user/{{userId}}
@@ -44,7 +44,26 @@ content-type: application/json
   "dateTo": "2019-07-14",
   "participants": [
     {
-      "userId": "5d21d4914b7c5c04b4a9e232"
+      "userId": "5dda57fcce8cb52e98630723"
+    },{
+      "userId": "5d21d5164b7c5c04b4a9e235"
+    },{
+      "userId": "5d21d51e4b7c5c04b4a9e236"
+    },{
+      "userId": "5d21d52f4b7c5c04b4a9e237"
+    }
+  ]
+}
+
+{
+  "no": 7,
+  "name": "紐づきありテスト7イベント",
+  "destinations": ["東京", "千葉"],
+  "dateFrom": "2019-07-13",
+  "dateTo": "2019-07-14",
+  "participants": [
+    {
+      "userId": "5dda57fcce8cb52e98630723"
     },{
       "userId": "5d21d5164b7c5c04b4a9e235"
     },{

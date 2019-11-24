@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const conf = require('config');
+const dbUrl = conf.db.uri.replace('${USER}',conf.db.user).replace('${PASS}',conf.db.pass);
 
 const bodyParser = require('body-parser');
 const cors = require('cors'); // corsポリシー対策
@@ -14,7 +16,7 @@ router.use(cors());
 const Category = require('../models/Category');
 
 // DB設定
-mongoose.connect('mongodb://localhost:27017/otokogiApp', {useNewUrlParser: true});
+mongoose.connect(`${dbUrl}/otokogiApp?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 /**
  * カテゴリ情報の全件取得
@@ -36,6 +38,7 @@ router.post('/', function (req, res) {
     return res.status(500).send('reqest body empty.');
   }
 
+  console.log(req.body.name);
   const instance = new Category({
     name: req.body.name
   });

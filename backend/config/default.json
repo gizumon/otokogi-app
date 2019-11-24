@@ -1,0 +1,12 @@
+{
+    "env": "production",
+    "api": {
+        "uri": "https://guarded-savannah-05576.herokuapp.com/",
+        "port": "3000" 
+    },
+    "db": {
+        "uri": "mongodb+srv://${USER}:${PASS}@cluster0-hfzhk.gcp.mongodb.net",
+        "user": "web_user",
+        "pass": "web_user"
+    }
+}

@@ -118,19 +118,24 @@ export default {
     },
     initCategoryInfo: async function () {
       await CategoryService.getAll();
-      await this.setArrayData(this.categories, CategoryService.categories);
-      console.log(CategoryService.categories, 'categories');
+      if (CategoryService.categories) {
+        await this.setArrayData(this.categories, CategoryService.categories);
+        console.log(CategoryService.categories, 'categories');
+      } else {
+        console.log('no category data');
+      }
     },
     initEventInfo: async function () {
       await EventService.getAll();
       await this.setArrayData(this.events, EventService.events);
     },
     initParticipantInfo: async function () {
+      if (!this.selectedEvent) { return; }
       await UserService.getSelectedEventParticipants(this.selectedEvent._id);
       await this.setArrayData(this.eventParticipants, UserService.eventParticipants);
     },
     initPointInfo: async function () {
-      // PointService.getAll();
+      if (!this.selectedEvent) { return; }
       await PointService.getSelectedEvent(this.selectedEvent._id);
       console.log(PointService.eventPoints, 'event point');
       await this.setArrayData(this.eventPoints, PointService.eventPoints);
