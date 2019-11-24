@@ -38,9 +38,8 @@ export default class UserService {
    * @return {String} http status
    */
   static getAll () {
-    const self = this;
-    return api.get('/user').then((res) => {
-      self.users = res.data;
+    return api.get('/user').then(res => {
+      this.users = res.data;
       return res.status;
     }).catch(e => {
       console.error(`ERR: user api error: ${e}`);
