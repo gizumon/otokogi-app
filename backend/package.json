@@ -4,13 +4,14 @@
   "description": "backend server side written by express",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=env_prod && nodemon ./index.js",
+    "start": "nodemon ./index.js",
     "dev_start": "set NODE_ENV=env_dev && nodemon ./index.js",
     "prod_start": "set NODE_ENV=env_prod && nodemon ./index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "config": "^3.2.4",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
