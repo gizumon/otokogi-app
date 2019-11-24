@@ -8,4 +8,13 @@
 * TBU: Member regist 画面
 * TBU: Power word 画面
 ## 使用しているOSS/技術
-  * 
+* 
+
+## コマンド
+### デプロイ
+* Heroku
+  * heroku login
+  * git subtree push --prefix backend/ heroku master
+* Firebase
+  * firebase login
+  * firebase deploy
