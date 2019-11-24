@@ -4,9 +4,9 @@
   "description": "backend server side written by express",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js",
-    "dev_start": "NODE_ENV=env_dev nodemon ./index.js",
-    "prod_start": "NODE_ENV=env_prod nodemon ./index.js"
+    "start": "set NODE_ENV=env_prod && nodemon ./index.js",
+    "dev_start": "set NODE_ENV=env_dev && nodemon ./index.js",
+    "prod_start": "set NODE_ENV=env_prod && nodemon ./index.js"
   },
   "author": "",
   "license": "ISC",
