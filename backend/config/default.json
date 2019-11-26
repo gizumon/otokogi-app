@@ -2,7 +2,7 @@
     "env": "default",
     "api": {
         "uri": "https://guarded-savannah-05576.herokuapp.com",
-        "port": "3000" 
+        "port": "5000" 
     },
     "db": {
         "uri": "mongodb+srv://${USER}:${PASS}@cluster0-hfzhk.gcp.mongodb.net",

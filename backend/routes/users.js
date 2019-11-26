@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const conf = require('config');
 const dbUrl = conf.db.uri.replace('${USER}',conf.db.user).replace('${PASS}',conf.db.pass);
-console.log(dbUrl);
 
 const bodyParser = require('body-parser');
 const cors = require('cors'); // corsポリシー対策
@@ -26,7 +25,6 @@ mongoose.connect(`${dbUrl}/otokogiApp?retryWrites=true&w=majority`, {useNewUrlPa
  */
 router.get('/', async function (req, res) {
   const users = await User.getAll();
-  console.log(users);
   return res.json(users);
 });
 
