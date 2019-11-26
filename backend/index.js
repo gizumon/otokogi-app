@@ -27,7 +27,7 @@ const categories = require('./routes/categories');
 const points = require('./routes/points');
 
 // HTTP設定
-const port = conf.api.port;
+const port = process.env.PORT || conf.api.port;
 
 app.post('/test', function (req, res) {
   res.send({
