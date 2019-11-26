@@ -26,7 +26,7 @@ const categories = require('./routes/categories');
 const points = require('./routes/points');
 
 // HTTP設定
-const port = 3000;
+const port = process.env.api.port;
 
 app.post('/test', function (req, res) {
   res.send({
@@ -46,4 +46,5 @@ process.on('SIGINT', function() {
   mongoose.disconnect();
 });
 
+console.log(process.env.env);
 app.listen(port, () => console.log(`Listening on port ${port}`));

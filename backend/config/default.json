@@ -1,5 +1,5 @@
 {
-    "env": "production",
+    "env": "default",
     "api": {
         "uri": "https://guarded-savannah-05576.herokuapp.com/",
         "port": "3000" 
