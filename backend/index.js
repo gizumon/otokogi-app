@@ -6,19 +6,19 @@ const conf = require('config');
 
 const app = express();
 
-var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-  // intercept OPTIONS method
-  if ('OPTIONS' == req.method) {
-    res.send(200);
-  }
-  else {
-    next();
-  }
-};
+// var allowCrossDomain = function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header("Access-Control-Allow-Credentials", true);
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+//   // intercept OPTIONS method
+//   if ('OPTIONS' == req.method) {
+//     res.send(200);
+//   }
+//   else {
+//     next();
+//   }
+// };
 
 // Load routes
 const users = require('./routes/users');
@@ -36,7 +36,7 @@ app.post('/test', function (req, res) {
 });
 
 // Use routes
-app.use(allowCrossDomain);
+// app.use(allowCrossDomain);
 app.use('/api/v1/user', users);
 app.use('/api/v1/event', events);
 app.use('/api/v1/category', categories);
