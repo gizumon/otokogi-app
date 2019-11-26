@@ -2,6 +2,7 @@ const express = require('express');
 // const bodyParser = require('body-parser');
 // const cors = require('cors'); // corsポリシー対策
 const mongoose = require('mongoose');
+const conf = require('config');
 
 const app = express();
 
@@ -26,7 +27,7 @@ const categories = require('./routes/categories');
 const points = require('./routes/points');
 
 // HTTP設定
-const port = process.env.api.port;
+const port = conf.env;
 
 app.post('/test', function (req, res) {
   res.send({
@@ -46,5 +47,5 @@ process.on('SIGINT', function() {
   mongoose.disconnect();
 });
 
-console.log(process.env.env);
+console.log(conf.env);
 app.listen(port, () => console.log(`Listening on port ${port}`));
