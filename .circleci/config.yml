@@ -1,0 +1,95 @@
+version: 2.1
+orbs:
+  firebase-deploy: cloudliner/firebase-deploy@0.0.2
+executors:
+  default:
+    working_directory: ~/workspace
+    docker:
+      - image: node:10
+
+commands:
+  restore_fr_npm:
+    steps:
+      - restore_cache:
+          name: Restore frontend npm dependencies
+          key: npm-{{ checksum "frontend/package.json" }}
+  restore_bk_npm:
+      steps:
+      - restore_cache:
+          name: Restore backend npm dependencies
+          key: npm-{{ checksum "backend/package.json" }}
+  save_fr_npm:
+    steps:
+      - save_cache:
+          name: Cache frontend npm dependencies
+          key: npm-{{ checksum "frontend/package.json" }}
+          paths:
+            - ~/workspace/fr/node_modules
+  save_bk_npm:
+    steps:
+      - save_cache:
+          name: Cache backend npm dependencies
+          key: npm-{{ checksum "backend/package.json" }}
+          paths:
+            - ~/workspace/bk/node_modules
+
+jobs:
+  setup:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run:
+          name: Install frontend dependencies
+          command: npm install --prefix ./frontend
+      - run:
+          name: Install backend dependencies
+          command: npm install --prefix ./backend
+      - save_fr_npm
+      - save_bk_npm
+
+  build:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - restore_fr_npm
+      - run:
+          name: Build
+          command: npm run build --prefix ./frontend
+      - save_fr_npm
+  # deploy_fr:
+  #   description: Deploy to firebase
+  #   parameters:
+  #     token:
+  #       type: string
+  #       description: Firebase Deploy Token
+  #   steps:
+  #     - run:
+  #         name: Install Firebase Tools
+  #         command: npm install --prefix=./firebase-deploy firebase-tools
+  #     - run:
+  #         name: Deploy to Firebase
+  #         command: ./firebase-deploy/node_modules/.bin/firebase deploy --token=<< parameters.token >>
+  deploy:
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Heroku
+          command: |
+            git subtree push --prefix backend/ https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+      - firebase-deploy/deploy
+        token: $FIREBASE_TOKEN
+
+workflows:
+  pull-request:
+    jobs:
+      - setup
+      - build:
+          requires:
+            - setup
+      - deploy:
+          requires:
+            - build
