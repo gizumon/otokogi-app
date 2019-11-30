@@ -10,10 +10,23 @@ content-type: application/json
     "loseNum": 0
 }
 
+### ユーザー登録
+POST https://guarded-savannah-05576.herokuapp.com/api/v1/user
+content-type: application/json
+
+{
+    "name": "Shohey",
+    "winNum": 0,
+    "loseNum": 1
+}
+
 ### ユーザー全件取得
 GET http://localhost:3000/api/v1/user/
 
 # @userId = 5dda4f6125ae073b34dd90c7
+### 
+
+GET https://guarded-savannah-05576.herokuapp.com/api/v1/user/
 
 ### 指定IDのユーザー取得
 GET http://localhost:3000/api/v1/user/{{userId}}
