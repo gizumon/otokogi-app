@@ -57,6 +57,12 @@ jobs:
       - run:
           name: Build
           command: npm run build --prefix ./frontend
+      - persist_to_workspace:
+          root: /root/workspace
+          paths:
+            - .git/*
+            - frontend/*
+            - backend/*
 
   # deploy_fr:
   #   description: Deploy to firebase
@@ -73,28 +79,32 @@ jobs:
   #         command: ./firebase-deploy/node_modules/.bin/firebase deploy --token=<< parameters.token >>
 
   deploy:
-    docker:
-      # - image: buildpack-deps:trusty
-      - image: circleci/node:8
+    # docker:
+    #   # - image: buildpack-deps:trusty
+    #   - image: circleci/node:8
+    executor:
+      name: default
     environment:
       FIREBASE_PJ: Otokogi
-      DIR: /home/circleci/project
+      DIR: /root/workspace
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/workspace
+      - run: pwd && ls -l && ls -l ./frontend && ls -l ./backend
       - run:
           name: Deploy to Heroku for backend
           command: |
             git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git `git subtree split --prefix backend/ master`:master --force
             # git subtree push --prefix backend/ https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
-      - run: cd ./frontend && pwd && mkdir ./firebase-deploy && ls -l
+      # - run: cd ./frontend && ls -l && chmod 777 $DIR/frontend/firebase-deploy/firebase
       # - firebase-deploy/deploy:
       #     token: $FIREBASE_TOKEN
-      - run:
-          name: Install firebase in global
-          command: npm install --prefix=$DIR/frontend/firebase-deploy firebase-tools
+      # - run:
+      #     name: Install firebase in global
+      #     command: npm install --prefix=$DIR/frontend/firebase-deploy firebase-tools
       - run:
           name: Deploy to firebase
-          command: $DIR/frontend/firebase-deploy/node_modules/.bin/firebase deploy --project "$FIREBASE_PJ" --token "$FIREBASE_TOKEN"
+          command: cd $DIR/frontend && pwd && ls -l && chmod 777 ./firebase-deploy/firebase && ./firebase-deploy/firebase deploy --token "$FIREBASE_TOKEN"
 
 workflows:
   pull-request:
