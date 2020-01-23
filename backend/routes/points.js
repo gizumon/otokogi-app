@@ -62,7 +62,8 @@ router.post('/', validation, async function (req, res) {
     no: maxNo + 1,
     eventId: req.body.eventId,
     userId: req.body.userId,
-    point: req.body.point
+    point: req.body.point,
+    categoryId: req.body.categoryId
   });
 
   instance.save( function (err) {
@@ -84,12 +85,12 @@ router.delete('/:pointId', async function (req, res) {
 });
 
 router.patch('/:pointId', validation, async function (req, res) {
+  const pointId = req.params.pointId;
   const errors = validationResult(req.body);
-  if (!errors.isEmpty()) {
+  if (!pointId || !errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   return Point.updateById(pointId, req.body).then(result=> {
-    console.log(result, 'patch');
     return res.status(200).json(result);
   }).catch(e => {
     return res.status(500).json(e);

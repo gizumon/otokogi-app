@@ -20,7 +20,7 @@ let PointSchema = new Schema({
     type: Number,
     required: true
   },
-  category: {
+  categoryId: {
     type: String
   },
   createdAt: {
@@ -63,6 +63,8 @@ PointSchema.static({
    * @param {Object} updateData 
    */
   updateById: function (id, updateData) {
+    // noは更新データに含めない
+    if (updateData.no) { delete updateData['no']; }
     return this.findById(id).updateMany(updateData);
   },
   deleteById: function(id) {

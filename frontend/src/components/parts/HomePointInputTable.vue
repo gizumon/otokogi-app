@@ -1,3 +1,4 @@
+/* eslint-disable key-spacing */
 <template>
   <div id="homePointInputTable">
     <div class="table-headers">
@@ -101,20 +102,13 @@ export default {
   },
   methods: {
     flipPage: function (page) {
-      switch (page) {
-        case 'first':
-          this.page = 1;
-          break;
-        case 'back':
-          this.page += -1;
-          break;
-        case 'next':
-          this.page += 1;
-          break;
-        case 'last':
-          this.page = Math.ceil(this.pointsData.length / this.options.recordsNum);
-          break;
-      }
+      const pageFunc = {
+        'first': () => { this.page = 1; },
+        'back': () => { this.page += -1; },
+        'next': () => { this.page += 1; },
+        'last': () => { this.page = Math.ceil(this.pointsData.length / this.options.recordsNum); }
+      };
+      pageFunc[page]();
     },
     deleteRecordById: async function (id) {
       const status = await PointService.deleteById(id);
@@ -135,6 +129,7 @@ export default {
       return common.addFigure(sum);
     },
     editRecord: function (point) {
+      console.log(point);
       Modal.editPoint(point, async function (registPoint) {
         console.log(registPoint);
         PointService.update(registPoint._id, registPoint).then(res => {
