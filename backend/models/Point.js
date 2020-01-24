@@ -63,7 +63,7 @@ PointSchema.static({
    * @param {Object} updateData 
    */
   updateById: function (id, updateData) {
-    // noは更新データに含めない
+    // noは更新データに含めない   
     if (updateData.no) { delete updateData['no']; }
     return this.findById(id).updateMany(updateData);
   },
@@ -92,7 +92,7 @@ PointSchema.method({
    * Delete otokogi point by No
    * @param {Number} no 
    */
-  deleteOPoiintByNo: function (no) {
+  deletePoiintByNo: function (no) {
     return this.findOneAndRemove({ "no" : no }, function(err){
       if(err) throw err;
    });

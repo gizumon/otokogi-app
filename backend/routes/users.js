@@ -54,6 +54,18 @@ router.get('/:userId', async function (req, res) {
 // });
 
 /**
+ * ユーザー情報の削除
+ */
+router.delete('/:userId', async function (req, res) {
+  User.deleteById(req.params.userId).then(result => {
+    console.log(result, 'delete');
+    return res.status(200).json(result);
+  }).catch(e => {
+    return res.status(500).json(e);
+  });
+});
+
+/**
  * ユーザー情報の登録
  * @request 
  * @response 

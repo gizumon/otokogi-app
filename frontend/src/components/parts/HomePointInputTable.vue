@@ -129,18 +129,16 @@ export default {
       return common.addFigure(sum);
     },
     editRecord: function (point) {
-      console.log(point);
+      var self = this;
       Modal.editPoint(point, async function (registPoint) {
-        console.log(registPoint);
-        PointService.update(registPoint._id, registPoint).then(res => {
-          if (res.status >= 200 && res.status <= 299) {
-            console.log('success update point!');
-            Modal.alert('Update success!');
-            this.$emit('isEdited');
-          } else {
-            console.error(`ERR: Error point delete for ${registPoint._id}\nstatus: ${status}`);
-          }
-        });
+        const status = await PointService.update(registPoint._id, registPoint);
+        if (status >= 200 && status <= 299) {
+          console.log('success update point!');
+          Modal.alert('Update success!');
+          self.$emit('isEdited');
+        } else {
+          console.error(`ERR: Error point update for ${registPoint._id}\nstatus: ${status}`);
+        }
       });
     }
   },

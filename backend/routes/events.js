@@ -93,13 +93,13 @@ router.post('/', function (req, res) {
 });
 
 router.patch('/:eventId', validation, async function (req, res) {
-  console.log(eventId, 'event id')
-  console.log(req.body, 'req.body')
+  // console.log(req.params.eventId, 'event id')
+  // console.log(req.body, 'req.body')
   const errors = validationResult(req.body);
-  if (!errors.isEmpty()) {
+  if (!req.params.eventId || !errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  Event.updateById(eventId, req.body).then(result => {
+  Event.updateById(req.params.eventId, req.body).then(result => {
     console.log(result, 'patch');
     return res.status(200).json(result);
   }).catch(e => {

@@ -87,6 +87,7 @@ export default {
     this.categories = CategoryService.categories;
     this.$set(this.selectedParticipant, '_id', this.params.point.userId);
     this.$set(this.selectedCategory, '_id', this.params.point.categoryId);
+    console.log(this.params.point.categoryId, 'categoryId');
     this.inputPoint = this.params.point.point;
   },
   methods: {

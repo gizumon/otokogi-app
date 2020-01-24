@@ -85,12 +85,11 @@ router.delete('/:pointId', async function (req, res) {
 });
 
 router.patch('/:pointId', validation, async function (req, res) {
-  const pointId = req.params.pointId;
   const errors = validationResult(req.body);
-  if (!pointId || !errors.isEmpty()) {
+  if (!req.params.pointId || !errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  return Point.updateById(pointId, req.body).then(result=> {
+  return Point.updateById(req.params.pointId, req.body).then(result=> {
     return res.status(200).json(result);
   }).catch(e => {
     return res.status(500).json(e);

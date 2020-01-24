@@ -137,7 +137,7 @@ export default {
     initPointInfo: async function () {
       if (!this.selectedEvent) { return; }
       await PointService.getSelectedEvent(this.selectedEvent._id);
-      console.log(PointService.eventPoints, 'event point');
+      // console.log(PointService.eventPoints, 'event point');
       await this.setArrayData(this.eventPoints, PointService.eventPoints);
       console.log(this.eventPoints, 'event point');
       this.$forceUpdate();
