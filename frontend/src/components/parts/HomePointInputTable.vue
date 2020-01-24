@@ -102,13 +102,7 @@ export default {
   },
   methods: {
     flipPage: function (page) {
-      const pageFunc = {
-        'first': () => { this.page = 1; },
-        'back': () => { this.page += -1; },
-        'next': () => { this.page += 1; },
-        'last': () => { this.page = Math.ceil(this.pointsData.length / this.options.recordsNum); }
-      };
-      pageFunc[page]();
+      this.page = common.flipPage(page, this.page);
     },
     deleteRecordById: async function (id) {
       const status = await PointService.deleteById(id);

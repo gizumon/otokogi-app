@@ -1,13 +1,20 @@
 // UserDBテストリクエスト
+@prod = https://guarded-savannah-05576.herokuapp.com
+@dev = http://localhost:3000
+
 
 ### ユーザー登録
-POST http://localhost:3000/api/v1/user
+POST https://pepup.life/act_fact
 content-type: application/json
+cookie: pepup_sess=aaf6527eb82578a789ec05a5ca9e26ff;
 
 {
-    "name": "Manato",
-    "winNum": 1,
-    "loseNum": 0
+  "id":17735342,
+  "user_id":1124581825608249344,
+  "act_thing_id":1,
+  "date":"2019-11-27",
+  "created_at":"2019-12-01T13:51:05.924+09:00",
+  "updated_at":"2019-12-01T13:51:05.924+09:00"
 }
 
 ### ユーザー登録
@@ -15,7 +22,7 @@ POST https://guarded-savannah-05576.herokuapp.com/api/v1/user
 content-type: application/json
 
 {
-    "name": "Kenchan",
+    "name": "Shohey",
     "winNum": 0,
     "loseNum": 1
 }
@@ -23,7 +30,7 @@ content-type: application/json
 ### ユーザー全件取得
 GET http://localhost:3000/api/v1/user/
 
-# @userId = 5dda4f6125ae073b34dd90c7
+@userId = 5d21d4914b7c5c04b4a9e232
 ### 
 
 GET https://guarded-savannah-05576.herokuapp.com/api/v1/user/
@@ -31,15 +38,16 @@ GET https://guarded-savannah-05576.herokuapp.com/api/v1/user/
 ### 指定IDのユーザー取得
 GET http://localhost:3000/api/v1/user/{{userId}}
 
+### 指定IDのユーザー削除
+DELETE http://localhost:3000/api/v1/user/{{userId}}
 
 ### カテゴリ登録
-POST http://localhost:3000/api/v1/category
+POST {{prod}}/api/v1/category
 content-type: application/json
 
 {
-    "name": "Transportation"
+    "name": "Service"
 }
-
 
 ### カテゴリ全件取得
 GET http://localhost:3000/api/v1/category

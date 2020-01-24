@@ -111,20 +111,7 @@ export default {
   },
   methods: {
     flipPage: function (page) {
-      switch (page) {
-        case 'first':
-          this.page = 1;
-          break;
-        case 'back':
-          this.page += -1;
-          break;
-        case 'next':
-          this.page += 1;
-          break;
-        case 'last':
-          this.page = Math.ceil(this.eventsData.length / this.options.recordsNum);
-          break;
-      }
+      this.page = common.flipPage(page, this.page);
     },
     formatDate: function (date, format) {
       return moment(date).format(format);
