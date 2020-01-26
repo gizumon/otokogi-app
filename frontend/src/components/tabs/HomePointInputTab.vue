@@ -37,7 +37,7 @@
               <div class="input-group-prepend">
                   <div class="input-group-text"><font-awesome-icon icon="yen-sign" /></div>
               </div>
-              <input class="form-control" type="tel" name="point" placeholder="1000" v-model="inputPoint" >
+              <input class="form-control" type="tel" name="point" placeholder="ex) 1000" v-model="inputPoint" >
               </div>
           </div>
           <div class="col-6 my-1">

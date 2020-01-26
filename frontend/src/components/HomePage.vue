@@ -13,17 +13,17 @@
           </b-tab>
           <b-tab title="Second">
             <template slot="title">
-              Member
-            </template>
-            <member-set-tab />
-          </b-tab>
-          <b-tab title="Third">
-            <template slot="title">
               Event
             </template>
             <event-set-tab />
           </b-tab>
-          <b-tab title="Forth">
+          <b-tab title="Third" disabled>
+            <template slot="title">
+              Member
+            </template>
+            <member-set-tab />
+          </b-tab>
+          <b-tab title="Forth" disabled>
             <template slot="title">
               Pword
             </template>
