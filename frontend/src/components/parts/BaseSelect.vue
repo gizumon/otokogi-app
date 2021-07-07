@@ -1,5 +1,5 @@
 <template>
-  <select class="form-control" :name="name" @input="updateValue" @focus="$emit('focus', $event)" @blur="$emit('blur', $event)">
+  <select class="form-control" :name="name" @input="updateValue" @focus="$emit('focus', $event)" @blur="$emit('blur', $event)" :multiple="isMultiSelectable" >
     <option v-if="selected === null" selected class="msg" :value=null disabled>{{ msg }}</option>
     <option v-else class="msg" :value=null disabled>{{ msg }}</option>
     <option v-for="option in optionsData" :value="option" :key="option._id" :selected="isSelected(selected, option)">
@@ -14,7 +14,8 @@ export default {
   props: {
     selected: { type: Object },
     options: { type: Array, require: true },
-    name: { type: String, require: true }
+    name: { type: String, require: true },
+    isMultiSelectable: { type: Boolean, default: false }
   },
   data: function () {
     return {

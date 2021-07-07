@@ -13,28 +13,28 @@
           </b-tab>
           <b-tab title="Second">
             <template slot="title">
-              Member
-            </template>
-            <member-set-tab />
-          </b-tab>
-          <b-tab title="Third">
-            <template slot="title">
               Event
             </template>
             <event-set-tab />
           </b-tab>
-          <b-tab title="Forth">
+          <b-tab title="Third" disabled>
             <template slot="title">
-              Powerword
+              Member
+            </template>
+            <member-set-tab />
+          </b-tab>
+          <b-tab title="Forth" disabled>
+            <template slot="title">
+              Pword
             </template>
             <powerword-regist-tab />
           </b-tab>
-          <b-tab title="Fifth" disabled>
+          <!-- <b-tab title="Fifth" disabled>
             <template slot="title">
               Summary
             </template>
             <div class="container"><div class="card"><div>TBD</div></div></div>
-          </b-tab>
+          </b-tab> -->
         </b-tabs>
       </div>
     </div>

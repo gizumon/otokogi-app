@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const conf = require('config');
+const dbUrl = conf.db.uri.replace('${USER}',conf.db.user).replace('${PASS}',conf.db.pass);
 
 const bodyParser = require('body-parser');
 const cors = require('cors'); // corsポリシー対策
@@ -18,11 +20,18 @@ const validation = [
   check('eventId', 'eventId is required and must be String').isString().exists(),
   check('userId', 'userId is required and must be String').isString().exists(),
   check('point', 'point is required and must be Number').matches(/\d+/).exists(),
-  check('category', 'category is required and must be String').isString().exists()
-];  
+  check('categoryId', 'categoryId is required and must be String').isString().exists()
+];
+
+// const validationUpdate = [
+//   check('eventId', 'eventId must be String').isString(),
+//   check('userId', 'userId must be String').isString(),
+//   check('point', 'point must be Number').matches(/\d+/),
+//   check('category', 'category must be String').isString()
+// ];
 
 // DB設定
-mongoose.connect('mongodb://localhost:27017/otokogiApp', {useNewUrlParser: true});
+mongoose.connect(`${dbUrl}/otokogiApp?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 /**
  * 指定したイベントIDの漢気ポイント情報の全取得
@@ -41,6 +50,7 @@ router.get('/:eventId', async function (req, res) {
  * @response 
  */
 router.post('/', validation, async function (req, res) {
+  console.log('post in');
   const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -52,7 +62,8 @@ router.post('/', validation, async function (req, res) {
     no: maxNo + 1,
     eventId: req.body.eventId,
     userId: req.body.userId,
-    point: req.body.point
+    point: req.body.point,
+    categoryId: req.body.categoryId
   });
 
   instance.save( function (err) {
@@ -64,18 +75,25 @@ router.post('/', validation, async function (req, res) {
   });
 });
 
-router.delete('/:eventId', async function (req, res) {
-  const result = await Point.deleteById(req.params.eventId);
-  return res.json(result);
+router.delete('/:pointId', async function (req, res) {
+  Point.deleteById(req.params.pointId).then(result => {
+    console.log(result, 'delete');
+    return res.status(200).json(result);
+  }).catch(e => {
+    return res.status(500).json(e);
+  });
 });
 
-router.patch('/', validation, async function (req, res) {
+router.patch('/:pointId', validation, async function (req, res) {
   const errors = validationResult(req.body);
-  if (!errors.isEmpty()) {
+  if (!req.params.pointId || !errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  const result = await Point.updateById(req.body._id, req.body);
-  return res.json(result);
+  return Point.updateById(req.params.pointId, req.body).then(result=> {
+    return res.status(200).json(result);
+  }).catch(e => {
+    return res.status(500).json(e);
+  });
 });
 
 module.exports = router;

@@ -12,6 +12,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import {ClientTable} from 'vue-tables-2';
 import ModalAlert from '../components/parts/BaseModalAlert';
 import ModalPointInput from '../components/parts/HomePointInputModal';
+import ModalEventEdit from '../components/parts/HomeEventEditModal';
 
 Vue.use(Router);
 Vue.use(BootstrapVue);
@@ -27,6 +28,7 @@ Vue.component('BaseModal', {
 });
 Vue.component('modal-alert', ModalAlert);
 Vue.component('modal-point-input', ModalPointInput);
+Vue.component('modal-event-edit', ModalEventEdit);
 
 export default new Router({
   routes: [

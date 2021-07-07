@@ -20,7 +20,7 @@ let PointSchema = new Schema({
     type: Number,
     required: true
   },
-  category: {
+  categoryId: {
     type: String
   },
   createdAt: {
@@ -54,7 +54,7 @@ PointSchema.static({
    */
   getMaxNo: function () {
     return this.find().sort({no:-1}).limit(1).then(result => {
-      return result[0].no;
+      return result[0] ? result[0].no : 0;
     });
   },
   /**
@@ -63,7 +63,9 @@ PointSchema.static({
    * @param {Object} updateData 
    */
   updateById: function (id, updateData) {
-    return this.findById(id).update(updateData);
+    // noは更新データに含めない   
+    if (updateData.no) { delete updateData['no']; }
+    return this.findById(id).updateMany(updateData);
   },
   deleteById: function(id) {
     return this.findByIdAndRemove(id, function(err){
@@ -90,13 +92,13 @@ PointSchema.method({
    * Delete otokogi point by No
    * @param {Number} no 
    */
-  deleteOPoiintByNo: function (no) {
+  deletePoiintByNo: function (no) {
     return this.findOneAndRemove({ "no" : no }, function(err){
       if(err) throw err;
    });
   }
 });
 
-const Category = mongoose.model('Point', PointSchema);
+const Point = mongoose.model('Point', PointSchema);
 
-module.exports = Category;
+module.exports = Point;

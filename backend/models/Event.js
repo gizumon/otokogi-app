@@ -14,9 +14,8 @@ let EventSchema = new Schema({
     require: true,
     default: 0,
   },
-  destination: {
+  destinations: {
     type: Array,
-    require: true,
   },
   dateFrom: {
     type: Date,
@@ -34,13 +33,13 @@ let EventSchema = new Schema({
   },
   winner: {
     type: String,
-    default: '未決',
+    default: '-',
   },
   loser: {
     type: String,
-    default: '未決',
+    default: '-',
   },
-  TotalPoint: {
+  totalPoint: {
     type: Number,
     default: 0,
   },
@@ -69,9 +68,25 @@ EventSchema.static({
       return result;
     });
   },
+  /**
+   * Update otokogi point object
+   * @param {String} id
+   * @param {Object} updateData 
+   */
+  updateById: function (id, updateData) {
+    return this.findById(id).update(updateData);
+  },
   deleteById: function(id) {
     return this.findByIdAndRemove(id, function(err){
       if(err) throw err;
+    });
+  },
+  /**
+   * Get max no value in 
+   */
+  getMaxNo: function () {
+    return this.find().sort({no:-1}).limit(1).then(result => {
+      return result[0] ? result[0].no : 0;
     });
   }
 });

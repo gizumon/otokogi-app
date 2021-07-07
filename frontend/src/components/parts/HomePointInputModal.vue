@@ -86,7 +86,8 @@ export default {
     this.eventParticipants = UserService.eventParticipants;
     this.categories = CategoryService.categories;
     this.$set(this.selectedParticipant, '_id', this.params.point.userId);
-    this.$set(this.selectedCategory, '_id', this.params.point.category);
+    this.$set(this.selectedCategory, '_id', this.params.point.categoryId);
+    console.log(this.params.point.categoryId, 'categoryId');
     this.inputPoint = this.params.point.point;
   },
   methods: {
@@ -94,13 +95,13 @@ export default {
       let registPoint = this.params.point;
 
       registPoint['userId'] = this.selectedParticipant['_id'];
-      registPoint['category'] = this.selectedCategory['name'];
+      registPoint['categoryId'] = this.selectedCategory['_id'];
       registPoint['point'] = this.inputPoint;
       console.log(this.selectedParticipant['_id']);
-      console.log(this.selectedCategory['name']);
+      console.log(this.selectedCategory['_id']);
       console.log(this.inputPoint);
 
-      if (registPoint['userId'] && registPoint['category'] && registPoint['point']) {
+      if (registPoint['userId'] && registPoint['categoryId'] && registPoint['point']) {
         this.params.onOk(registPoint);
         Modal.close();
       } else {
@@ -120,7 +121,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang='scss'>
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -183,5 +184,20 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.input-group {
+  .input-group-text {
+    width: 40px;
+    text-align: center;
+    .text-icon {
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+  }
+  .sm-text {
+    font-size: 0.8rem;
+    letter-spacing: -0.2px;
+  }
 }
 </style>

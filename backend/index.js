@@ -2,6 +2,7 @@ const express = require('express');
 // const bodyParser = require('body-parser');
 // const cors = require('cors'); // corsポリシー対策
 const mongoose = require('mongoose');
+const conf = require('config');
 
 const app = express();
 
@@ -12,7 +13,7 @@ const categories = require('./routes/categories');
 const points = require('./routes/points');
 
 // HTTP設定
-const port = 3000;
+const port = process.env.PORT || conf.api.port;
 
 app.post('/test', function (req, res) {
   res.send({
@@ -21,6 +22,7 @@ app.post('/test', function (req, res) {
 });
 
 // Use routes
+// app.use(allowCrossDomain);
 app.use('/api/v1/user', users);
 app.use('/api/v1/event', events);
 app.use('/api/v1/category', categories);
@@ -31,4 +33,5 @@ process.on('SIGINT', function() {
   mongoose.disconnect();
 });
 
+console.log(conf.env);
 app.listen(port, () => console.log(`Listening on port ${port}`));

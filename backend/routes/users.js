@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const conf = require('config');
+const dbUrl = conf.db.uri.replace('${USER}',conf.db.user).replace('${PASS}',conf.db.pass);
 
 const bodyParser = require('body-parser');
 const cors = require('cors'); // corsポリシー対策
@@ -14,7 +16,7 @@ router.use(cors());
 const User = require('../models/User');
 
 // DB設定
-mongoose.connect('mongodb://localhost:27017/otokogiApp', {useNewUrlParser: true});
+mongoose.connect(`${dbUrl}/otokogiApp?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 /**
  * ユーザー情報の全件取得
@@ -50,6 +52,18 @@ router.get('/:userId', async function (req, res) {
 //   }
 //   return res.json(result);
 // });
+
+/**
+ * ユーザー情報の削除
+ */
+router.delete('/:userId', async function (req, res) {
+  User.deleteById(req.params.userId).then(result => {
+    console.log(result, 'delete');
+    return res.status(200).json(result);
+  }).catch(e => {
+    return res.status(500).json(e);
+  });
+});
 
 /**
  * ユーザー情報の登録

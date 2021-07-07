@@ -41,4 +41,7 @@ export default class CategoryService {
   static getCategories () {
     return this.categories;
   }
+  static getNameById (id) {
+    return this.categories.find(val => val.id === id);
+  }
 }

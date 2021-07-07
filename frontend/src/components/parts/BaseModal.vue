@@ -74,6 +74,7 @@ export default {
 }
 
 .modal-body {
+  max-width: 80%;
   margin: 20px 0;
 }
 

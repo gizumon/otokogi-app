@@ -1,4 +1,5 @@
 import api from '../api/index';
+import EventService from './EventService';
 
 // type Point = {
 //   _id: String,
@@ -56,11 +57,32 @@ export default class PointService {
     });
   }
   /**
+   * 任意イベントにおけるポイントのユーザー合計を算出(eventIdを指定しない場合は全体)
+   * @param {String} ?eventId
+   */
+  static getEventSummary (eventId) {
+    return api.get(`/point/${eventId}`).then(res => {
+      const results = [];
+      const participants = EventService.events.find(event => event._id === eventId).participants;
+      participants.forEach(participant => {
+        const result = {
+          userId: participant.userId,
+          total: res.data.filter(data => data.userId === participant.userId)
+          // eslint-disable-next-line indent
+                         .reduce((prev, current) => prev.point + current.point).point
+        };
+        results.push(result);
+      });
+      console.log(results, 'summary results');
+      return results;
+    });
+  }
+  /**
    * ポイントの追加
    * @param {Object} point
    * @return {String} status
    */
-  static registPoint (point) {
+  static regist (point) {
     return api.post(`/point`, point).then(res => {
       console.log(res.status, 'Success point regist');
       return res.status;
@@ -74,7 +96,7 @@ export default class PointService {
    * @param {String} pointId
    * @return {String} status
    */
-  static deletePointById (id) {
+  static deleteById (id) {
     return api.delete(`/point/${id}`).then(res => {
       console.log(res.status, `Success point delete: ${id}`);
       return res.status;
@@ -88,9 +110,9 @@ export default class PointService {
    * @param {Object} point
    * @return {Srting} status
    */
-  static updatePoint (point) {
-    return api.patch(`/point`, point).then(res => {
-      console.log(res.status, `Success point update: ${point._id}`);
+  static update (id, point) {
+    return api.patch(`/point/${id}`, point).then(res => {
+      console.log(res.status, `Success point update: ${id}`);
       return res.status;
     }).catch((err) => {
       console.error('ERR: Failed to patch specified event point information : ' + err);

@@ -1,3 +1,4 @@
+/* eslint-disable key-spacing */
 <template>
   <div id="homePointInputTable">
     <div class="table-headers">
@@ -41,7 +42,7 @@
           </template> -->
           <!-- <template v-else> -->
           <tr class="points-list" v-for="point in prepareData" :key="point._id">
-            <th class="table-index"><a class="circle-btn" @click="editPoint(point)">{{ point.no }}</a></th>
+            <th class="table-index"><a class="circle-btn" @click="editRecord(point)">{{ point.no }}</a></th>
               <td v-for="participant in participantsData" :key="participant._id" class="t-col-5">
                 <span v-if="participant._id === point.userId">{{ point.point }}</span>
                 <span v-else>0</span>
@@ -101,23 +102,10 @@ export default {
   },
   methods: {
     flipPage: function (page) {
-      switch (page) {
-        case 'first':
-          this.page = 1;
-          break;
-        case 'back':
-          this.page += -1;
-          break;
-        case 'next':
-          this.page += 1;
-          break;
-        case 'last':
-          this.page = Math.ceil(this.pointsData.length / this.options.recordsNum);
-          break;
-      }
+      this.page = common.flipPage(page, this.page);
     },
     deleteRecordById: async function (id) {
-      const status = await PointService.deletePointById(id);
+      const status = await PointService.deleteById(id);
       if (status >= 200 && status <= 299) {
         console.log('success delete point!');
         this.$emit('isEdited');
@@ -129,21 +117,21 @@ export default {
       let sum = 0;
       this.pointsData.forEach(point => {
         if (point.userId === userId) {
-          sum = sum + point.point;
+          sum = sum + Number(point.point);
         }
       });
       return common.addFigure(sum);
     },
-    editPoint: function (point) {
+    editRecord: function (point) {
+      var self = this;
       Modal.editPoint(point, async function (registPoint) {
-        console.log(registPoint);
-        const status = await PointService.updatePoint(registPoint);
+        const status = await PointService.update(registPoint._id, registPoint);
         if (status >= 200 && status <= 299) {
           console.log('success update point!');
           Modal.alert('Update success!');
-          this.$emit('isEdited');
+          self.$emit('isEdited');
         } else {
-          console.error(`ERR: Error point delete for ${registPoint._id}\nstatus: ${status}`);
+          console.error(`ERR: Error point update for ${registPoint._id}\nstatus: ${status}`);
         }
       });
     }
@@ -151,8 +139,8 @@ export default {
   watch: {
     pointsData: function () {
       this.page = 1;
-      this.isFirstPage = (this.page <= 1);
-      this.isLastPage = (this.page >= Math.ceil(this.pointsData.length / this.options.recordsNum));
+      // this.isFirstPage = (this.page <= 1);
+      // this.isLastPage = (this.page >= Math.ceil(this.pointsData.length / this.options.recordsNum));
     },
     page: function () {
       this.isFirstPage = (this.page <= 1);
